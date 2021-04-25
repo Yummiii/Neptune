@@ -1,7 +1,9 @@
+use std::time::{SystemTime, UNIX_EPOCH};
 use clipboard::{ClipboardContext, ClipboardProvider};
 use passwords::PasswordGenerator;
 use umiko::hotkeys::{HotKeys, KeyModifiers};
 use enigo::{Enigo, KeyboardControllable};
+use uuid::Uuid;
 
 fn main() {    
     let mut hk = HotKeys::new();
@@ -21,9 +23,15 @@ fn main() {
 
     hk.add(KeyModifiers::MOD_CONTROL, 'g', || {
         if umiko::keys::is_locked(0x91) {
-
+            escrever(Uuid::new_v4().to_string());
         };
-    })
+    });
+
+    hk.add(KeyModifiers::MOD_CONTROL, 'o', || {
+        if umiko::keys::is_locked(0x91) {
+            escrever(SystemTime::now().duration_since(UNIX_EPOCH).expect("error").as_millis().to_string());
+        };
+    });
 
     hk.handle();
 }
