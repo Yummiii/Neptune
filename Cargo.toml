@@ -8,8 +8,7 @@ edition = "2018"
 
 [dependencies]
 enigo = "0.0.14"
-umiko = "0.1.2"
+umiko = "0.1.4"
 passwords = "3.1.7"
 clipboard = "0.5.0"
 uuid = { version = "0.8.2", features = ["v4"] }
-windows-service = "0.3.1"
