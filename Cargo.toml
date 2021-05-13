@@ -1,14 +1,10 @@
 [package]
 name = "neptune"
 version = "0.1.0"
-authors = ["Yummiii <Leeo05050@outlook.com>"]
+authors = ["yummi"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-enigo = "0.0.14"
-umiko = "0.1.4"
-passwords = "3.1.7"
-clipboard = "0.5.0"
-uuid = { version = "0.8.2", features = ["v4"] }
+clap = "^3.0.0-beta.2"
