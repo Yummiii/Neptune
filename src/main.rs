@@ -1,46 +1,45 @@
-mod arguments;
+use chrono::{Datelike, Utc};
+use glob::glob;
+use notify::{DebouncedEvent, RecommendedWatcher, RecursiveMode, Watcher};
+use std::{fs, path::Path, process::Command, sync::mpsc::channel, time::Duration};
 
-use std::{process::{Command}, time::{SystemTime, UNIX_EPOCH}};
-
-use arguments::Options;
-use enigo::{Enigo, KeyboardControllable};
-use passwords::PasswordGenerator;
-use uuid::Uuid;
-
-fn main() {
-    let args = Options::build();
-    
-    if args.password {
-        let senha = PasswordGenerator::new()
-            .length(50)
-            .lowercase_letters(true)
-            .uppercase_letters(true)
-            .symbols(true)
-            .numbers(true)
-            .generate_one()
-            .unwrap();
-        enviar(senha, args.escrever);
-    } else if args.timestamp {
-        enviar(SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .expect("error")
-            .as_millis()
-            .to_string(), args.escrever);
-    } else if args.uuid {
-        enviar(Uuid::new_v4().to_string(), args.escrever);
-    }
+fn enviar_img_pra_clipboard(local: String) {
+    Command::new("/usr/bin/xclip")
+        .arg("-selection")
+        .arg("clipboard")
+        .arg("-t")
+        .arg("image/png")
+        .arg("-i")
+        .arg(local)
+        .spawn().expect("Erro ao escrever na clipboard");
 }
 
-fn enviar(conteudo: String, escrever: bool) {
-    Command::new("/usr/bin/qdbus")
-        .arg("org.kde.klipper")
-        .arg("/klipper")
-        .arg("setClipboardContents")
-        .arg(conteudo)
-        .spawn().expect("Erro ao escrever na clipboard");
+fn main() -> notify::Result<()> {
+    //println!("{:?}", glob("/home/yummi/Taiga/Printis/**/*.*").unwrap().count());
+    let (tx, rx) = channel();
+    let mut watcher: RecommendedWatcher = Watcher::new(tx, Duration::from_secs(1))?;
+    watcher.watch("/home/yummi/teste", RecursiveMode::Recursive)?;
 
-    if escrever {
-        let mut enigo = Enigo::new();
-        enigo.key_sequence_parse("{+CTRL}{+SHIFT}v{-CTRL}{-SHIFT}");
+    loop {
+        match rx.recv() {
+            Ok(event) => {
+                if let DebouncedEvent::Create(path) = event {
+                    let path = path.to_str().unwrap().to_string();
+                    enviar_img_pra_clipboard(path.clone());
+
+                    let utc_now = Utc::now();
+                    let local_prints = format!("/home/yummi/Taiga/Printis/{}-{:02}", utc_now.year(), utc_now.month());
+                    let local_prints = Path::new(&local_prints);
+                    let quantidade = glob(&format!("{}/**/*.*", local_prints.parent().unwrap().to_str().unwrap())).unwrap().count();
+                    
+                    fs::create_dir_all(local_prints).unwrap();
+                    Command::new("/usr/bin/mv")
+                        .arg(path)
+                        .arg(format!("{}/{}.png", local_prints.to_str().unwrap(), quantidade + 1))
+                        .spawn().unwrap();
+                }
+            },
+            Err(e) => println!("watch error: {:?}", e),
+        }
     }
 }
