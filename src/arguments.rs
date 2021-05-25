@@ -8,7 +8,9 @@ pub struct Options {
     #[clap(short, long)]
     pub uuid: bool,
     #[clap(short, long)]
-    pub timestamp: bool
+    pub timestamp: bool,
+    #[clap(short, long)]
+    pub escrever: bool
 }
 
 impl Options {
