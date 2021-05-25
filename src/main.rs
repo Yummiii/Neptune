@@ -1,45 +1,19 @@
+use std::io::{self, Read};
 use chrono::{Datelike, Utc};
+use tokio::fs;
 use glob::glob;
-use notify::{DebouncedEvent, RecommendedWatcher, RecursiveMode, Watcher};
-use std::{fs, path::Path, process::Command, sync::mpsc::channel, time::Duration};
 
-fn enviar_img_pra_clipboard(local: String) {
-    Command::new("/usr/bin/xclip")
-        .arg("-selection")
-        .arg("clipboard")
-        .arg("-t")
-        .arg("image/png")
-        .arg("-i")
-        .arg(local)
-        .spawn().expect("Erro ao escrever na clipboard");
-}
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let mut buf = Vec::new();
+    let mut stdin = io::stdin(); 
+    stdin.read_to_end(&mut buf)?;
 
-fn main() -> notify::Result<()> {
-    //println!("{:?}", glob("/home/yummi/Taiga/Printis/**/*.*").unwrap().count());
-    let (tx, rx) = channel();
-    let mut watcher: RecommendedWatcher = Watcher::new(tx, Duration::from_secs(1))?;
-    watcher.watch("/home/yummi/teste", RecursiveMode::Recursive)?;
+    let now = Utc::now();
+    let local = format!("/home/yummi/Taiga/Printis/{}-{:02}", now.year(), now.month());
+    fs::create_dir_all(&local).await?;
+    let quantidade = glob(&format!("{}/../**/*.*", &local))?.count() + 1;
+    fs::write(format!("{}/{}.png", local, quantidade), buf).await?;
 
-    loop {
-        match rx.recv() {
-            Ok(event) => {
-                if let DebouncedEvent::Create(path) = event {
-                    let path = path.to_str().unwrap().to_string();
-                    enviar_img_pra_clipboard(path.clone());
-
-                    let utc_now = Utc::now();
-                    let local_prints = format!("/home/yummi/Taiga/Printis/{}-{:02}", utc_now.year(), utc_now.month());
-                    let local_prints = Path::new(&local_prints);
-                    let quantidade = glob(&format!("{}/**/*.*", local_prints.parent().unwrap().to_str().unwrap())).unwrap().count();
-                    
-                    fs::create_dir_all(local_prints).unwrap();
-                    Command::new("/usr/bin/mv")
-                        .arg(path)
-                        .arg(format!("{}/{}.png", local_prints.to_str().unwrap(), quantidade + 1))
-                        .spawn().unwrap();
-                }
-            },
-            Err(e) => println!("watch error: {:?}", e),
-        }
-    }
+    Ok(())
 }
