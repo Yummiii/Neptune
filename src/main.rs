@@ -3,7 +3,8 @@ mod arguments;
 mod utils;
 
 use passwords::PasswordGenerator;
-use utils::send;
+use utils::enviar;
+use uuid::Uuid;
 use crate::{arguments::Options, configs::Configs};
 
 pub type GenericError = Box<dyn std::error::Error + Send + Sync>;
@@ -20,7 +21,9 @@ fn main() -> Result<(), GenericError> {
             .symbols(true)
             .numbers(true)
             .generate_one()?;
-        send(senha)?;
+        enviar(senha)?;
+    } else if args.uuid {
+        enviar(Uuid::new_v4().to_string())?;
     }
 
     Ok(())

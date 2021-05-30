@@ -4,7 +4,9 @@ use clap::{Clap, AppSettings};
 #[clap(setting = AppSettings::ColoredHelp)]
 pub struct Options {
     #[clap(short, long)]
-    pub password: bool
+    pub password: bool,
+    #[clap(short, long)]
+    pub uuid: bool
 }
 
 impl Options {
