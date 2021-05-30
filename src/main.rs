@@ -1,29 +1,43 @@
-mod configs;
 mod arguments;
 mod utils;
+mod configs;
 
+use std::time::{SystemTime, UNIX_EPOCH};
+use arguments::{Options, SubCommands};
+use configs::Configs;
 use passwords::PasswordGenerator;
 use utils::enviar;
 use uuid::Uuid;
-use crate::{arguments::Options, configs::Configs};
 
 pub type GenericError = Box<dyn std::error::Error + Send + Sync>;
 
 fn main() -> Result<(), GenericError> {
     let args = Options::build();
     let cfgs: Configs = confy::load_path("nepnep.toml")?;
-
-    if args.password {
-        let senha = PasswordGenerator::new()
-            .length(cfgs.tamanho_senha as usize)
-            .lowercase_letters(true)
-            .uppercase_letters(true)
-            .symbols(true)
-            .numbers(true)
-            .generate_one()?;
-        enviar(senha)?;
-    } else if args.uuid {
-        enviar(Uuid::new_v4().to_string())?;
+    
+    match args.subcmd {
+        SubCommands::Geradores(gerador) => {
+            if gerador.tipo == 1 {
+                let senha = PasswordGenerator::new()
+                    .length(cfgs.tamanho_senha as usize)
+                    .lowercase_letters(true)
+                    .uppercase_letters(true)
+                    .symbols(true)
+                    .numbers(true)
+                    .generate_one()?;
+                enviar(senha)?;
+            } else if gerador.tipo == 2 {
+                enviar(Uuid::new_v4().to_string())?;
+            } else if gerador.tipo == 3 {
+                enviar(SystemTime::now()
+                    .duration_since(UNIX_EPOCH)?
+                    .as_millis()
+                    .to_string())?;
+            }
+        },
+        SubCommands::Enviar(..) => {
+            println!("Enviar")
+        }
     }
 
     Ok(())
