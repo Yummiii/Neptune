@@ -13,6 +13,8 @@ sudo wget "$avatar" -O "/var/lib/AccountsService/icons/$USERNAME"
 [ ! -d "$HOME/.local/share/backgrounds/" ] && mkdir "$HOME/.local/share/backgrounds/"
 wget "$wallpaper" -O "$HOME/.local/share/backgrounds/$(basename "$wallpaper")"
 gsettings set org.gnome.desktop.background picture-uri "$HOME/.local/share/backgrounds/$(basename "$wallpaper")"
+git config --global user.name "Yummiii"
+git config --global user.email "Leeo05050@outlook.com"
 clear
 
 echo "DNFs"
