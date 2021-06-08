@@ -1,5 +1,5 @@
 #!/bin/bash
-wallpaper="https://danbooru.donmai.us/data/original/7d/6e/__gabriel_tenma_white_gabriel_dropout_drawn_by_yuki_kokoro__7d6e7137fe16d61acfa2fc97feff4208.png"
+wallpaper="https://firebasestorage.googleapis.com/v0/b/nepnep-98c6a.appspot.com/o/1143692.jpg?alt=media&token=c86ff03f-3570-413c-bb6f-f5b623cfc64a"
 avatar="https://i.imgur.com/6lxpyPY.png"
 flameshot_cfg="https://firebasestorage.googleapis.com/v0/b/nepnep-98c6a.appspot.com/o/flameshot.ini?alt=media&token=971dca01-4757-49dc-9a76-907307765a84"
 hotkeys="https://firebasestorage.googleapis.com/v0/b/nepnep-98c6a.appspot.com/o/hotkeys.dconf?alt=media&token=5ee8053e-016e-44f4-a10d-e648226eaa4a"
@@ -11,8 +11,9 @@ gsettings set org.gnome.desktop.interface clock-format "12h"
 gsettings set org.gnome.desktop.wm.preferences button-layout "appmenu:minimize,close"
 sudo wget "$avatar" -O "/var/lib/AccountsService/icons/$USERNAME"
 [ ! -d "$HOME/.local/share/backgrounds/" ] && mkdir "$HOME/.local/share/backgrounds/"
-wget "$wallpaper" -O "$HOME/.local/share/backgrounds/$(basename "$wallpaper")"
-gsettings set org.gnome.desktop.background picture-uri "$HOME/.local/share/backgrounds/$(basename "$wallpaper")"
+nome="$(date +%s ).jpg"
+wget "$wallpaper" -O "$HOME/.local/share/backgrounds/$nome"
+gsettings set org.gnome.desktop.background picture-uri "$HOME/.local/share/backgrounds/$nome"
 git config --global user.name "Yummiii"
 git config --global user.email "Leeo05050@outlook.com"
 clear
