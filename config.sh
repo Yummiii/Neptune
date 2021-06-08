@@ -48,6 +48,7 @@ if [ -d "$HOME/.config/monitors.xml" ]; then
     sudo cp -v "$HOME/.config/monitors.xml" "/var/lib/gdm/.config/"
     sudo chown gdm:gdm "/var/lib/gdm/.config/monitors.xml"
 fi
+if [ ! -d "$HOME/.config/flameshot"] && mkdir "$HOME/.config/flameshot"
 wget "$flameshot_cfg" -O "$HOME/.config/flameshot/flameshot.ini"
 git clone https://github.com/Yummiii/Neptune.git "$HOME/.nepnep"
 chmod +x "$HOME/.nepnep/print.sh"
@@ -65,4 +66,4 @@ clear
 
 echo "Extensões"
 pip3 install --user git+https://github.com/essembeh/gnome-extensions-cli
-gnome-extensions-cli install 615 1319 779 36 750 1276
+gnome-extensions-cli install 615 1319 779 36 1276
