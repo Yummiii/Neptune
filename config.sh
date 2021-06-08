@@ -2,7 +2,7 @@
 wallpaper="https://danbooru.donmai.us/data/original/7d/6e/__gabriel_tenma_white_gabriel_dropout_drawn_by_yuki_kokoro__7d6e7137fe16d61acfa2fc97feff4208.png"
 avatar="https://i.imgur.com/6lxpyPY.png"
 flameshot_cfg="https://firebasestorage.googleapis.com/v0/b/nepnep-98c6a.appspot.com/o/flameshot.ini?alt=media&token=971dca01-4757-49dc-9a76-907307765a84"
-hotkeys="https://firebasestorage.googleapis.com/v0/b/nepnep-98c6a.appspot.com/o/hotkeys.dconf?alt=media&token=7ef59c16-10bd-4fc6-ad11-486603550b2a"
+hotkeys="https://firebasestorage.googleapis.com/v0/b/nepnep-98c6a.appspot.com/o/hotkeys.dconf?alt=media&token=5ee8053e-016e-44f4-a10d-e648226eaa4a"
 
 echo "Configurações do usuario"
 sudo hostnamectl set-hostname "Isla"
