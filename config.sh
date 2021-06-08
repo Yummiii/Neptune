@@ -41,9 +41,9 @@ cargo install viu
 clear
 
 echo "Misc"
-if [ -d "~/.config/monitors.xml" ]; then
-    sudo cp -v ~/.config/monitors.xml /var/lib/gdm/.config/ 
-    sudo chown gdm:gdm /var/lib/gdm/.config/monitors.xml
+if [ -d "$HOME/.config/monitors.xml" ]; then
+    sudo cp -v "$HOME/.config/monitors.xml" "/var/lib/gdm/.config/"
+    sudo chown gdm:gdm "/var/lib/gdm/.config/monitors.xml"
 fi
 wget "$flameshot_cfg" -O "$HOME/.config/flameshot/flameshot.ini"
 git clone https://github.com/Yummiii/Neptune.git "$HOME/.nepnep"
@@ -62,4 +62,4 @@ clear
 
 echo "Extensões"
 pip3 install --user git+https://github.com/essembeh/gnome-extensions-cli
-gnome-extensions-cli install 615 1319 779 36 750
+gnome-extensions-cli install 615 1319 779 36 750 1276
