@@ -23,7 +23,7 @@ sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
 sudo dnf remove firefox gnome-boxes -y
 sudo dnf upgrade -y
-sudo dnf install sqlitebrowser kitty firewall-config gnome-tweaks playerctl flameshot chrome-gnome-shell code gnome-extensions-app openssl -y
+sudo dnf install sqlitebrowser kitty firewall-config gnome-tweaks playerctl flameshot chrome-gnome-shell code gnome-extensions-app openssl xclip -y
 clear
 
 echo "Flatpaks"
