@@ -6,6 +6,7 @@ hotkeys="https://firebasestorage.googleapis.com/v0/b/nepnep-98c6a.appspot.com/o/
 
 echo "Configurações do usuario"
 sudo hostnamectl set-hostname "Isla"
+gsettings set org.gnome.desktop.interface show-battery-percentage true
 gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
 gsettings set org.gnome.desktop.interface clock-format "12h"
 gsettings set org.gnome.desktop.wm.preferences button-layout "appmenu:minimize,close"
@@ -21,7 +22,7 @@ clear
 echo "DNFs"
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
-sudo dnf remove firefox gnome-boxes -y
+sudo dnf remove firefox gnome-boxes totem gnome-photos gnome-maps gnome-contacts cheese gnome-weather -y
 sudo dnf upgrade -y
 sudo dnf install sqlitebrowser kitty firewall-config gnome-tweaks playerctl flameshot chrome-gnome-shell code gnome-extensions-app openssl xclip -y
 clear
@@ -66,4 +67,4 @@ clear
 
 echo "Extensões"
 pip3 install --user git+https://github.com/essembeh/gnome-extensions-cli
-gnome-extensions-cli install 615 1319 779 36 1276
+gnome-extensions-cli install 615 1319 779 36 1276 3193

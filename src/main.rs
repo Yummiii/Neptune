@@ -1,10 +1,8 @@
 mod arguments;
 mod utils;
-mod configs;
 
 use std::time::{SystemTime, UNIX_EPOCH};
 use arguments::{Options, SubCommands};
-use configs::Configs;
 use passwords::PasswordGenerator;
 use utils::enviar;
 use uuid::Uuid;
@@ -12,14 +10,12 @@ use uuid::Uuid;
 pub type GenericError = Box<dyn std::error::Error + Send + Sync>;
 
 fn main() -> Result<(), GenericError> {
-    let args = Options::build();
-    let cfgs: Configs = confy::load_path("nepnep.toml")?;
-    
+    let args = Options::build();    
     match args.subcmd {
         SubCommands::Geradores(gerador) => {
             if gerador.tipo == 1 {
                 let senha = PasswordGenerator::new()
-                    .length(cfgs.tamanho_senha as usize)
+                    .length(50)
                     .lowercase_letters(true)
                     .uppercase_letters(true)
                     .symbols(true)
