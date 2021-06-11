@@ -3,6 +3,7 @@ wallpaper="https://firebasestorage.googleapis.com/v0/b/nepnep-98c6a.appspot.com/
 avatar="https://i.imgur.com/6lxpyPY.png"
 flameshot_cfg="https://firebasestorage.googleapis.com/v0/b/nepnep-98c6a.appspot.com/o/flameshot.ini?alt=media&token=971dca01-4757-49dc-9a76-907307765a84"
 hotkeys="https://firebasestorage.googleapis.com/v0/b/nepnep-98c6a.appspot.com/o/hotkeys.dconf?alt=media&token=5ee8053e-016e-44f4-a10d-e648226eaa4a"
+extensions_cfgs="https://firebasestorage.googleapis.com/v0/b/nepnep-98c6a.appspot.com/o/extension-settings.dconf?alt=media&token=23f8b0c9-438c-43e1-b16c-47128ff7d37c"
 
 echo "Configurações do usuario"
 sudo hostnamectl set-hostname "Isla"
@@ -27,6 +28,13 @@ sudo dnf upgrade -y
 sudo dnf install sqlitebrowser kitty firewall-config gnome-tweaks playerctl flameshot chrome-gnome-shell code gnome-extensions-app openssl xclip -y
 clear
 
+echo "Extensões"
+pip3 install --user git+https://github.com/essembeh/gnome-extensions-cli
+gnome-extensions-cli install 615 1319 779 36 1276 3193 517
+wget "$extensions_cfgs" -O "$HOME/extensions.dconf"
+dconf load "/org/gnome/shell/extensions/" < "$HOME/extensions.dconf"
+rm "$HOME/extensions.dconf"
+
 echo "Flatpaks"
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 flatpak install flathub org.mozilla.firefox com.github.tchx84.Flatseal org.filezillaproject.Filezilla org.kde.krita com.discordapp.Discord com.github.micahflee.torbrowser-launcher org.telegram.desktop com.transmissionbt.Transmission com.spotify.Client org.videolan.VLC org.gnome.Boxes com.jetbrains.DataGrip org.gnome.Builder -y
@@ -49,7 +57,7 @@ if [ -d "$HOME/.config/monitors.xml" ]; then
     sudo cp -v "$HOME/.config/monitors.xml" "/var/lib/gdm/.config/"
     sudo chown gdm:gdm "/var/lib/gdm/.config/monitors.xml"
 fi
-if [ ! -d "$HOME/.config/flameshot"] && mkdir "$HOME/.config/flameshot"
+[ ! -d "$HOME/.config/flameshot" ] && mkdir "$HOME/.config/flameshot"
 wget "$flameshot_cfg" -O "$HOME/.config/flameshot/flameshot.ini"
 git clone https://github.com/Yummiii/Neptune.git "$HOME/.nepnep"
 chmod +x "$HOME/.nepnep/print.sh"
@@ -64,7 +72,3 @@ dconf load "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/" <
 gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom7/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom8/']"
 rm "$HOME/hotkeys.dconf"
 clear
-
-echo "Extensões"
-pip3 install --user git+https://github.com/essembeh/gnome-extensions-cli
-gnome-extensions-cli install 615 1319 779 36 1276 3193
