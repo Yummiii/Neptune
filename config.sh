@@ -1,6 +1,6 @@
 #!/bin/bash
 wallpaper="https://firebasestorage.googleapis.com/v0/b/nepnep-98c6a.appspot.com/o/1143692.jpg?alt=media&token=c86ff03f-3570-413c-bb6f-f5b623cfc64a"
-avatar="https://i.imgur.com/6lxpyPY.png"
+avatar="https://i.imgur.com/oSFt2BF.jpg"
 flameshot_cfg="https://firebasestorage.googleapis.com/v0/b/nepnep-98c6a.appspot.com/o/flameshot.ini?alt=media&token=971dca01-4757-49dc-9a76-907307765a84"
 hotkeys="https://firebasestorage.googleapis.com/v0/b/nepnep-98c6a.appspot.com/o/hotkeys.dconf?alt=media&token=5ee8053e-016e-44f4-a10d-e648226eaa4a"
 extensions_cfgs="https://firebasestorage.googleapis.com/v0/b/nepnep-98c6a.appspot.com/o/extension-settings.dconf?alt=media&token=23f8b0c9-438c-43e1-b16c-47128ff7d37c"
@@ -25,7 +25,8 @@ sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
 sudo dnf remove firefox gnome-boxes totem gnome-photos gnome-maps gnome-contacts cheese gnome-weather -y
 sudo dnf upgrade -y
-sudo dnf install sqlitebrowser kitty firewall-config gnome-tweaks playerctl flameshot chrome-gnome-shell code gnome-extensions-app openssl xclip -y
+sudo dnf install sqlitebrowser kitty firewall-config gnome-tweaks playerctl flameshot chrome-gnome-shell code gnome-extensions-app openssl xclip ffmpegthumbnailer -y
+sudo dnf autoremove
 clear
 
 echo "Extensões"
@@ -37,7 +38,7 @@ rm "$HOME/extensions.dconf"
 
 echo "Flatpaks"
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-flatpak install flathub org.mozilla.firefox com.github.tchx84.Flatseal org.filezillaproject.Filezilla org.kde.krita com.discordapp.Discord com.github.micahflee.torbrowser-launcher org.telegram.desktop com.transmissionbt.Transmission com.spotify.Client org.videolan.VLC org.gnome.Boxes com.jetbrains.DataGrip org.gnome.Builder -y
+flatpak install flathub org.mozilla.firefox com.github.tchx84.Flatseal org.filezillaproject.Filezilla org.kde.krita com.discordapp.Discord com.github.micahflee.torbrowser-launcher com.transmissionbt.Transmission com.spotify.Client org.videolan.VLC org.gnome.Boxes im.riot.Riot -y
 clear
 
 echo "Node"
