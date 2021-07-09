@@ -1,6 +1,6 @@
 use crate::GenericError;
 use os_pipe::pipe;
-use std::{fs::{File}, io::Write, process::Command};
+use std::{fs::File, io::Write, process::{Command, Stdio}};
 
 pub fn quantidade_arquivos(pasta: &str) -> Result<i32, GenericError> {
     let (reader, writer) = pipe().unwrap();
@@ -17,7 +17,7 @@ pub fn quantidade_arquivos(pasta: &str) -> Result<i32, GenericError> {
     Ok(String::from_utf8(wc_out.stdout)?.trim().parse::<i32>()?)
 }
 
-pub fn print(local: &str) -> Result<(), GenericError> {
+pub fn capturar_print(local: &str) -> Result<(), GenericError> {
     let out = Command::new("/usr/bin/flameshot")
         .args(vec!["gui", "-r"])
         .output()?;
@@ -26,5 +26,14 @@ pub fn print(local: &str) -> Result<(), GenericError> {
         let mut file = File::create(local)?;
         file.write_all(&out.stdout)?;
     }
+    Ok(())
+}
+
+pub fn enviar_clipboard(txt: String) -> Result<(), GenericError> {
+    let cmd = Command::new("/usr/bin/xclip")
+        .args(vec!["-selection", "clipboard"])
+        .stdin(Stdio::piped())
+        .spawn()?;
+    cmd.stdin.unwrap().write_all(txt.as_bytes())?;
     Ok(())
 }
