@@ -1,50 +1,17 @@
-mod arguments;
-mod cmds;
-
-use crate::{arguments::Comandos, cmds::capturar_print};
-use arguments::Opts;
+use std::{env::args, fs};
 use chrono::Utc;
-use clap::Clap;
-use cmds::{enviar_clipboard, quantidade_arquivos};
-use passwords::PasswordGenerator;
-use uuid::Uuid;
-use std::{fs, time::{SystemTime, UNIX_EPOCH}};
+use run_script::ScriptOptions;
 
 pub type GenericError = Box<dyn std::error::Error + Send + Sync>;
-
 fn main() -> Result<(), GenericError> {
-    let opts = Opts::parse();
+    let mut local = Utc::now().format(&args().nth(1).expect("Você não falou o pasta que tenho q salvar o print")).to_string();
+    
+    let (quantidade, _) = run_script::run_script_or_exit!(r#"find $1../ -type f | wc -l"#, &vec![local.clone()], &ScriptOptions::new());
+    let proximo = quantidade.trim().parse::<i32>().unwrap() + 1;
 
-    match opts.subcmd {
-        Comandos::Print(print) => {
-            let mut local = Utc::now().format(&print.path).to_string();
-            fs::create_dir_all(&local)?;
-            local.push_str(&format!(
-                "{}.png",
-                quantidade_arquivos(&format!("{}..", &local))? + 1
-            ));
-            capturar_print(&local)?;
-        }
-        Comandos::Senha(senha) => {
-            let senha = PasswordGenerator::new()
-                .length(senha.tamanho)
-                .lowercase_letters(true)
-                .uppercase_letters(true)
-                .symbols(true)
-                .numbers(true)
-                .generate_one()?;
-            enviar_clipboard(senha)?;
-        }
-        Comandos::Uuid => {
-            enviar_clipboard(Uuid::new_v4().to_string())?;
-        }
-        Comandos::Timestamp => {
-            enviar_clipboard(SystemTime::now()
-            .duration_since(UNIX_EPOCH)?
-            .as_millis()
-            .to_string())?;
-        }
-    }
+    fs::create_dir_all(&local)?;
+    local.push_str(&format!("{}.png", proximo));
 
-    Ok(())
+    let (_, _) = run_script::run_script_or_exit!(r#"flameshot gui -r > $1"#, &vec![local], &ScriptOptions::new());
+    Ok(())    
 }
