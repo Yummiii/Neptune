@@ -1,12 +1,28 @@
+mod serial;
+mod btn_handler;
+mod gui_manager;
+
 use std::fs;
 use chrono::Utc;
-use fs_extra::{file::CopyOptions};
+use fs_extra::file::CopyOptions;
 use hotwatch::{blocking::{Hotwatch, Flow}, Event};
 use run_script::ScriptOptions;
+use tokio::{task, sync::mpsc};
 
+#[tokio::main]
+async fn main() {
+    let (tx, rx) = mpsc::channel(1);
+    
+    task::spawn(async {
+        gui_manager::init(rx).await;
+    });
 
-fn main() {
+    task::spawn(async {
+        serial::iniciar_serial(tx);
+    });
+
     let work_dir: String = format!("{}/Capturas de tela", xdg_user::pictures().unwrap().unwrap().display());
+    println!("Work dir: {}\n", work_dir);
 
     fs::create_dir_all(&work_dir).unwrap();
     let mut hotwatch = Hotwatch::new().expect("hotwatch failed to initialize!");
@@ -19,7 +35,7 @@ fn main() {
             let proximo = quantidade.trim().parse::<i32>().unwrap() + 1;
             local.push_str(&format!("{}.png", proximo));
             
-            println!("Original: {}\nPara: {}\n", path.to_str().unwrap(), &local);
+            println!("\nOriginal: {}\nPara: {}", path.to_str().unwrap(), &local);
             fs_extra::file::move_file(path, local, &CopyOptions::new()).unwrap();
         }
         Flow::Continue

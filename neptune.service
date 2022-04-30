@@ -1,0 +1,11 @@
+[Service]
+ExecStart=/home/yummi/.cargo/bin/neptune
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=neptune
+User=yummi
+Group=yummi
+
+[Install]
+WantedBy=multi-user.target
