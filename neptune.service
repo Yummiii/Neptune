@@ -1,12 +1,12 @@
 [Service]
 ExecStart=/home/yummi/.cargo/bin/neptune
 Restart=always
-StandardOutput=syslog
-StandardError=syslog
+StandardOutput=journal
+StandardError=journal
 SyslogIdentifier=neptune
-User=yummi
-Group=yummi
-SupplementaryGroups=input
+
 
 [Install]
 WantedBy=multi-user.target
+WantedBy=graphical.target
+WantedBy=graphical-session.target
