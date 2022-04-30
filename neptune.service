@@ -6,6 +6,7 @@ StandardError=syslog
 SyslogIdentifier=neptune
 User=yummi
 Group=yummi
+SupplementaryGroups=input
 
 [Install]
 WantedBy=multi-user.target

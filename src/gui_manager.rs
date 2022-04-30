@@ -1,14 +1,23 @@
-use tokio::sync::mpsc::Receiver;
+use sysinfo::{System, SystemExt};
+use tokio::sync::Mutex;
+use crate::device_helpers;
 
-pub async fn init(mut rx: Receiver<i32>) {
+lazy_static::lazy_static!{
+    static ref PROCESS_LIST: Mutex<Vec<u32>> = Mutex::new(Vec::new());
+}
 
-    while let Some(msg) = rx.recv().await {
-        println!("{}", msg);
+pub async fn block_screen() {
+    if System::new_all().processes_by_exact_name("nepnep").count() <= 0 {         
+        PROCESS_LIST.lock().await.push(run_script::spawn_script!("/home/yummi/Taiga/CodigosFodas/Neptune/telas_legais/build/src/./nepnep").unwrap().id());
+        PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("evtest --grab /dev/input/event{} > /dev/null", device_helpers::get_keyboard_num())).unwrap().id());
+        PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("evtest --grab /dev/input/event{} > /dev/null", device_helpers::get_mouse_num())).unwrap().id());
+    } 
+}
 
-        if msg == 1 {
-            run_script::spawn_script!("/home/yummi/Taiga/CodigosFodas/Neptune/telas_legais/build/src/./nepnep").unwrap();
-        } else if msg == 2 {
-            run_script::spawn_script!("killall -9 nepnep").unwrap();
-        }
-    }
+pub async fn kill_screen() {
+    println!("{:?}", PROCESS_LIST.lock().await);
+    PROCESS_LIST.lock().await.iter().for_each(|id| {
+        run_script::spawn_script!(format!("kill -9 $(pstree -p {} | grep -o '[0-9]*')", id)).unwrap();
+    });
+    PROCESS_LIST.lock().await.clear();
 }

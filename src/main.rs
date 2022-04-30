@@ -1,24 +1,19 @@
 mod serial;
 mod btn_handler;
 mod gui_manager;
+mod device_helpers;
 
 use std::fs;
 use chrono::Utc;
 use fs_extra::file::CopyOptions;
 use hotwatch::{blocking::{Hotwatch, Flow}, Event};
 use run_script::ScriptOptions;
-use tokio::{task, sync::mpsc};
+use tokio::task;
 
 #[tokio::main]
-async fn main() {
-    let (tx, rx) = mpsc::channel(1);
-    
+async fn main() {    
     task::spawn(async {
-        gui_manager::init(rx).await;
-    });
-
-    task::spawn(async {
-        serial::iniciar_serial(tx);
+        serial::iniciar_serial().await;
     });
 
     let work_dir: String = format!("{}/Capturas de tela", xdg_user::pictures().unwrap().unwrap().display());
