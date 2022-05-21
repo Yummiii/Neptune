@@ -1,6 +1,14 @@
-use std::env;
-
 fn main() {
-    let out_dir = env::var("OUT_DIR").unwrap();
-    run_script::spawn_script!(format!("clang clibs/nepnep.c $(pkg-config --cflags --libs libadwaita-1) -o {}/../../../nepnep", out_dir)).unwrap();
+    println!("cargo:rerun-if-changed=clibs/");
+    
+    let mut builder = cc::Build::new();
+    builder.file("clibs/nepnep.c");
+    //builder.cpp(true);
+
+    let libs = pkg_config::Config::new().probe("libadwaita-1").expect("libadwaita-1 not found");
+    libs.include_paths.iter().for_each(|x| {
+        builder.include(x);
+    });
+
+    builder.compile("nepnep");
 }

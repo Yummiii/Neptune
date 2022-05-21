@@ -15,7 +15,6 @@ async fn main() {
     task::spawn(async {
         serial::iniciar_serial().await;
     });
-
     let work_dir: String = format!("{}/Capturas de tela", xdg_user::pictures().unwrap().unwrap().display());
     println!("Work dir: {}\n", work_dir);
 
