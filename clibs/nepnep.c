@@ -20,7 +20,10 @@ static void activate_cb(GtkApplication *app)
 
     if (img != NULL)
     {
-      GtkWidget *image = gtk_picture_new_for_filename(img);
+      GdkPixbuf *img_buf = gdk_pixbuf_new_from_file_at_scale(img, 1920, 1080, true, NULL);
+      GtkWidget *image = gtk_picture_new_for_pixbuf(img_buf);
+      // GtkWidget *image = gtk_picture_new_for_filename(img);
+      // gtk_picture_set_can_shrink(GTK_PICTURE(image), true);
       adw_application_window_set_content(ADW_APPLICATION_WINDOW(window), image);
     }
 
@@ -38,7 +41,6 @@ void top_nep(char *path)
   {
     img = path;
   }
-  g_log_set_handler("Gdk", G_LOG_LEVEL_ERROR | G_LOG_FLAG_FATAL, g_log_set_default_handler, NULL);
   g_autoptr(AdwApplication) app = NULL;
   app = adw_application_new("moe.yummi.nepnep", G_APPLICATION_NON_UNIQUE);
   g_signal_connect(app, "activate", G_CALLBACK(activate_cb), NULL);
@@ -48,7 +50,7 @@ void top_nep(char *path)
 void down_nep()
 {
   printf("Down Nep\n");
-  
+
   for (int i = 0; i < (int)g_list_length(telas); i++)
   {
     GtkWidget *window = g_list_nth_data(telas, i);

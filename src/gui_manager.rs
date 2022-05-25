@@ -4,6 +4,8 @@ use std::{
 };
 use tokio::{sync::Mutex, task};
 
+use crate::device_helpers;
+
 lazy_static::lazy_static! {
     static ref PROCESS_LIST: Mutex<Vec<u32>> = Mutex::new(Vec::new());
 }
@@ -22,21 +24,17 @@ pub async fn block_screen() {
             });
             task::yield_now().await;
         }
-        PROCESS_LIST.lock().await.push(1);
+        //PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("evtest --grab /dev/input/event{} > /dev/null", device_helpers::get_keyboard_num())).unwrap().id());
+        //PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("evtest --grab /dev/input/event{} > /dev/null", device_helpers::get_mouse_num())).unwrap().id());
     }
-    //PROCESS_LIST.lock().await.push(run_script::spawn_script!("/home/yummi/Taiga/CodigosFodas/Neptune/telas_legais/build/src/./nepnep").unwrap().id());
-    //PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("evtest --grab /dev/input/event{} > /dev/null", device_helpers::get_keyboard_num())).unwrap().id());
-    //PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("evtest --grab /dev/input/event{} > /dev/null", device_helpers::get_mouse_num())).unwrap().id());
 }
 
 pub async fn kill_screen() {
-    //println!("{:?}", PROCESS_LIST.lock().await);
     unsafe {
         down_nep();
     }
-    // PROCESS_LIST.lock().await.iter().for_each(|id| {
-    //     run_script::spawn_script!(format!("kill -9 $(pstree -p {} | grep -o '[0-9]*')", id))
-    //         .unwrap();
-    // });
+    PROCESS_LIST.lock().await.iter().for_each(|id| {
+        run_script::spawn_script!(format!("kill -9 $(pstree -p {} | grep -o '[0-9]*')", id)).unwrap();
+    });
     PROCESS_LIST.lock().await.clear();
 }
