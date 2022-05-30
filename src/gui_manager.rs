@@ -1,13 +1,11 @@
-use std::{
-    ffi::CString,
-    os::raw::c_char,
-};
+use std::{ffi::CString, os::raw::c_char};
 use tokio::{sync::Mutex, task};
 
-use crate::device_helpers;
+//use crate::device_helpers;
 
 lazy_static::lazy_static! {
     static ref PROCESS_LIST: Mutex<Vec<u32>> = Mutex::new(Vec::new());
+    static ref BLOCK_IMG: Mutex<CString> = Mutex::new(CString::new("").unwrap());
 }
 
 extern "C" {
@@ -15,12 +13,17 @@ extern "C" {
     fn down_nep();
 }
 
+pub async fn set_img(img: &String) {
+    println!("Block img: {}", img);
+    let c_str = CString::new(img.as_str()).unwrap();
+    *BLOCK_IMG.lock().await = c_str;
+}
+
 pub async fn block_screen() {
     if PROCESS_LIST.lock().await.len() == 0 {
         unsafe {
             task::spawn(async {
-                let a = CString::new("").unwrap();
-                top_nep(a.as_ptr());
+                top_nep(BLOCK_IMG.lock().await.as_ptr());
             });
             task::yield_now().await;
         }

@@ -1,0 +1,9 @@
+[screenshot_configs]
+enabled = true
+screenshots_path = "/tmp/screenshots/"
+screenshots_redirect_path = "/home/yummi/Taiga/Printis/%Y-%m/"
+
+[screenlock_configs]
+enabled = true
+#serial_port = "/dev/ttyUSB0"
+screenlock_img = "img_foda"

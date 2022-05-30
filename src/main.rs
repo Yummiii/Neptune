@@ -1,38 +1,40 @@
-mod serial;
 mod btn_handler;
+mod configs;
+//mod device_helpers;
 mod gui_manager;
-mod device_helpers;
+mod prints_redirector;
+mod serial;
 
-use std::fs;
-use chrono::Utc;
-use fs_extra::file::CopyOptions;
-use hotwatch::{blocking::{Hotwatch, Flow}, Event};
-use run_script::ScriptOptions;
+use std::thread;
+
+use configs::Configs;
 use tokio::task;
 
 #[tokio::main]
-async fn main() {    
-    task::spawn(async {
-        serial::iniciar_serial().await;
-    });
-    let work_dir: String = format!("{}/Capturas de tela", xdg_user::pictures().unwrap().unwrap().display());
-    println!("Work dir: {}\n", work_dir);
+async fn main() {
+    let configs = Configs::get();
 
-    fs::create_dir_all(&work_dir).unwrap();
-    let mut hotwatch = Hotwatch::new().expect("hotwatch failed to initialize!");
-    hotwatch.watch(work_dir, |event: Event| {
-        if let Event::Create(path) = event {
-            let mut local = Utc::now().format("/home/yummi/Taiga/Printis/%Y-%m/").to_string();
-            fs::create_dir_all(&local).unwrap();
+    if let Some(screenlock_configs) = configs.screenlock_configs {
+        if screenlock_configs.enabled {
+            if let Some(serial_port) = screenlock_configs.serial_port {
+                task::spawn(async move {
+                    serial::iniciar_serial(&serial_port).await;
+                });
+            }
 
-            let (quantidade, _) = run_script::run_script_or_exit!(r#"find $1../ -type f | wc -l"#, &vec![local.clone()], &ScriptOptions::new());
-            let proximo = quantidade.trim().parse::<i32>().unwrap() + 1;
-            local.push_str(&format!("{}.png", proximo));
-            
-            println!("\nOriginal: {}\nPara: {}", path.to_str().unwrap(), &local);
-            fs_extra::file::move_file(path, local, &CopyOptions::new()).unwrap();
+            if let Some(block_img) = screenlock_configs.screenlock_img {
+                gui_manager::set_img(&block_img).await;
+            }
         }
-        Flow::Continue
-    }).unwrap();
-    hotwatch.run();
+    }
+
+    if let Some(screenshot_configs) = configs.screenshot_configs {
+        if screenshot_configs.enabled {
+            task::spawn(async move {
+                prints_redirector::iniciar(screenshot_configs).await;
+            });
+        }
+    }
+
+    thread::park();
 }
