@@ -15,7 +15,10 @@ tokio = { version = "1.17.0", features = ["macros", "rt-multi-thread", "sync"] }
 lazy_static = "1.4.0"
 figment = { version = "0.10.6", features = ["toml"] }
 serde = { version = "1.0.137", features = ["derive"] }
+libadwaita-sys = "0.1.0"
 
 [build-dependencies]
-pkg-config = "0.3.25"
+# pkg-config = "0.3.25"
 cc = "1.0.73"
+libadwaita-sys = "0.1.0"
+

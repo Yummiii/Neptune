@@ -53,7 +53,7 @@ void down_nep()
 
   for (int i = 0; i < (int)g_list_length(telas); i++)
   {
-    GtkWidget *window = g_list_nth_data(telas, i);
+    GtkWidget *window = GTK_WIDGET(g_list_nth_data(telas, i));
     gtk_window_destroy(GTK_WINDOW(window));
   }
 

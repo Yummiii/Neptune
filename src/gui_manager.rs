@@ -8,7 +8,7 @@ lazy_static::lazy_static! {
     static ref BLOCK_IMG: Mutex<CString> = Mutex::new(CString::new("").unwrap());
 }
 
-extern "C" {
+extern {
     fn top_nep(path: *const c_char);
     fn down_nep();
 }

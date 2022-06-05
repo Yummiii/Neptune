@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/usr/include/**",
-                "/usr/lib/**"
+                "/usr/lib/**",
+                "/usr/lib64/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

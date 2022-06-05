@@ -1,0 +1,11 @@
+[Service]
+Restart=always
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=neptune
+ExecStart=/bin/bash neptune
+
+[Install]
+WantedBy=multi-user.target
+WantedBy=graphical.target
+WantedBy=graphical-session.target
