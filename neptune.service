@@ -6,6 +6,4 @@ SyslogIdentifier=neptune
 ExecStart=%h/.cargo/bin/neptune
 
 [Install]
-WantedBy=multi-user.target
-WantedBy=graphical.target
 WantedBy=graphical-session.target
