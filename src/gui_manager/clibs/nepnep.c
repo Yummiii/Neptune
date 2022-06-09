@@ -8,7 +8,6 @@ static void activate_cb(GtkApplication *app)
   GdkDisplay *display = gdk_display_get_default();
   GListModel *monitors = gdk_display_get_monitors(display);
   int suicidio = g_list_model_get_n_items(monitors);
-  ;
 
   for (int i = 0; i < suicidio; i++)
   {
@@ -37,7 +36,7 @@ static void activate_cb(GtkApplication *app)
 
 void top_nep(char *path)
 {
-  g_print("\nTop Nep: [%s]\n", path);
+  printf("\nTop Nep: [%s]\n", path);
   img = path;
   AdwApplication *app = adw_application_new("moe.yummi.nepnep", G_APPLICATION_NON_UNIQUE);
   g_signal_connect(app, "activate", G_CALLBACK(activate_cb), NULL);

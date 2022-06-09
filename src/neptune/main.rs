@@ -4,9 +4,10 @@ mod device_helpers;
 mod block_manager;
 mod prints_redirector;
 mod serial;
-use std::thread;
+use std::{thread, io::Write, fs::File};
 use configs::Configs;
 use tokio::task;
+use whoami::username;
 
 #[tokio::main]
 async fn main() {
@@ -20,7 +21,15 @@ async fn main() {
                 });
             }
 
-            if let Some(block_img) = screenlock_configs.screenlock_img {
+            if let Some(mut block_img) = screenlock_configs.screenlock_img {
+                if block_img.starts_with("http://") || block_img.starts_with("https://") {
+                    let res = reqwest::get(&block_img).await.unwrap().bytes().await.unwrap();
+                    let file_name = format!("/home/{}/.config/neptune/block", username());
+                    let mut file = File::create(&file_name).unwrap();
+                    file.write_all(&res).unwrap();
+                    block_img = file_name;
+
+                }
                 block_manager::set_img(&block_img).await;
             }
         }
