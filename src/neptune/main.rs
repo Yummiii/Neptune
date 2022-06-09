@@ -1,7 +1,7 @@
 mod btn_handler;
 mod configs;
 //mod device_helpers;
-mod gui_manager;
+mod block_manager;
 mod prints_redirector;
 mod serial;
 
@@ -23,7 +23,7 @@ async fn main() {
             }
 
             if let Some(block_img) = screenlock_configs.screenlock_img {
-                gui_manager::set_img(&block_img).await;
+                block_manager::set_img(&block_img).await;
             }
         }
     }

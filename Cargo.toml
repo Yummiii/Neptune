@@ -2,8 +2,17 @@
 name = "neptune"
 version = "0.1.0"
 edition = "2021"
+default-run = "neptune"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "neptune"
+path = "src/neptune/main.rs"
+
+[[bin]]
+name = "neptune_gui_block_manager"
+path = "src/gui_manager/main.rs"
 
 [dependencies]
 chrono = "0.4.19"
