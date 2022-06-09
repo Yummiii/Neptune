@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 char *img;
+bool *hide_cursor;
 
 static void activate_cb(GtkApplication *app)
 {
@@ -13,7 +14,9 @@ static void activate_cb(GtkApplication *app)
   {
     GtkWidget *window = adw_application_window_new(app);
 
-    gtk_widget_set_cursor_from_name(window, "none");
+    if (hide_cursor != NULL && hide_cursor) {
+      gtk_widget_set_cursor_from_name(window, "none");
+    }
     gtk_window_set_destroy_with_parent(GTK_WINDOW(window), true);
     gtk_window_set_default_size(GTK_WINDOW(window), 545, 735);
 
@@ -34,10 +37,11 @@ static void activate_cb(GtkApplication *app)
   }
 }
 
-void top_nep(char *path)
+void top_nep(char *path, bool *hide_cursor_in)
 {
   printf("\nTop Nep: [%s]\n", path);
   img = path;
+  hide_cursor = hide_cursor_in;
   AdwApplication *app = adw_application_new("moe.yummi.nepnep", G_APPLICATION_NON_UNIQUE);
   g_signal_connect(app, "activate", G_CALLBACK(activate_cb), NULL);
   g_application_run(G_APPLICATION(app), 0, 0);

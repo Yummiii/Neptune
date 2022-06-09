@@ -32,6 +32,10 @@ async fn main() {
                 }
                 block_manager::set_img(&block_img).await;
             }
+
+            if let Some(disable_input) = screenlock_configs.disable_input {
+                block_manager::set_input_disabled(disable_input).await;
+            }
         }
     }
 
