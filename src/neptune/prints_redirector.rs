@@ -7,24 +7,39 @@ use run_script::ScriptOptions;
 use crate::configs::ScreenshotConfigs;
 
 pub async fn iniciar(cfgs: ScreenshotConfigs) {
-    println!("Screenshots watch dir: {}", cfgs.screenshots_path);
-    println!("Screenshots redirect dir: {}", cfgs.screenshots_redirect_path);
+    let watch_dir =  &cfgs.screenshots_watch_dir.unwrap();
+    let target_dir = cfgs.screenshots_target_dir.unwrap();
 
-    fs::create_dir_all(&cfgs.screenshots_path).unwrap();
+    println!("Screenshots watch dir: {}", watch_dir);
+    println!("Screenshots target dir: {}", target_dir);
+
+    if cfgs.initial_check.unwrap_or(false) {
+        println!("Initial screenshot check");
+        for file in fs::read_dir(watch_dir).unwrap() {
+            let file = file.unwrap();
+            mover(&target_dir, &file.path().as_os_str().to_str().unwrap().to_string());
+        }
+    }
+
+    fs::create_dir_all(watch_dir).unwrap();
     let mut hotwatch = Hotwatch::new().expect("hotwatch failed to initialize!");
-    hotwatch.watch(&cfgs.screenshots_path, move |event: Event| {
+    hotwatch.watch(watch_dir, move |event: Event| {
         if let Event::Create(path) = event {
-            let mut local = Utc::now().format(&cfgs.screenshots_redirect_path).to_string();
-            fs::create_dir_all(&local).unwrap();
-
-            let (quantidade, _) = run_script::run_script_or_exit!(r#"find $1../ -type f | wc -l"#, &vec![local.clone()], &ScriptOptions::new());
-            let proximo = quantidade.trim().parse::<i32>().unwrap() + 1;
-            local.push_str(&format!("{}.png", proximo));
-            
-            println!("\nOriginal: {}\nPara: {}", path.to_str().unwrap(), &local);
-            fs_extra::file::move_file(path, local, &CopyOptions::new()).unwrap();
+            mover(&target_dir, &path.to_str().unwrap().to_string());
         }
         Flow::Continue
     }).expect("hotwatch failed to watch!");
     hotwatch.run();
+}
+
+fn mover(target_dir: &String, source: &String) {
+    let mut local = Utc::now().format(target_dir).to_string();
+    fs::create_dir_all(&local).unwrap();
+
+    let (quantidade, _) = run_script::run_script_or_exit!(r#"find $1../ -type f | wc -l"#, &vec![local.clone()], &ScriptOptions::new());
+    let proximo = quantidade.trim().parse::<i32>().unwrap() + 1;
+    local.push_str(&format!("{}.png", proximo));
+    
+    println!("\nOriginal: {}\nPara: {}", source, local);
+    fs_extra::file::move_file(source, local, &CopyOptions::new()).unwrap();
 }

@@ -1,6 +1,5 @@
-use tokio::{sync::Mutex};
-
-//use crate::device_helpers;
+use tokio::sync::Mutex;
+use crate::device_helpers;
 
 lazy_static::lazy_static! {
     static ref PROCESS_LIST: Mutex<Vec<u32>> = Mutex::new(Vec::new());
@@ -14,9 +13,10 @@ pub async fn set_img(img: &String) {
 
 pub async fn block_screen() {
     if PROCESS_LIST.lock().await.len() == 0 {
-        PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("./neptune_gui_block_manager {}", BLOCK_IMG.lock().await)).unwrap().id());
-        //PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("evtest --grab /dev/input/event{} > /dev/null", device_helpers::get_keyboard_num())).unwrap().id());
-        //PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("evtest --grab /dev/input/event{} > /dev/null", device_helpers::get_mouse_num())).unwrap().id());
+        //isso ta uma gambiarra fudida, mas por enquanto ta funcionando
+        PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("neptune_gui_block_manager {}", BLOCK_IMG.lock().await)).unwrap().id());
+        PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("evtest --grab /dev/input/event{} > /dev/null", device_helpers::get_keyboard_num())).unwrap().id());
+        PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("evtest --grab /dev/input/event{} > /dev/null", device_helpers::get_mouse_num())).unwrap().id());
     }
 }
 

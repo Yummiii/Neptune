@@ -3,7 +3,7 @@ Restart=always
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=neptune
-ExecStart=/bin/bash neptune
+ExecStart=%h/.cargo/bin/neptune
 
 [Install]
 WantedBy=multi-user.target

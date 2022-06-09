@@ -1,9 +1,5 @@
 [screenshot_configs]
-enabled = true
-screenshots_path = "/tmp/screenshots/"
-screenshots_redirect_path = "/home/yummi/Taiga/Printis/%Y-%m/"
+enabled = false
 
 [screenlock_configs]
-enabled = true
-serial_port = "/dev/ttyUSB0"
-screenlock_img = "/home/yummi/Taiga/Imagens/S/__misaka_mikoto_and_shokuhou_misaki_toaru_majutsu_no_index_and_1_more__5c9d97ea928f63964372bdfefcc8e904.jpg"
+enabled = false

@@ -1,12 +1,10 @@
 mod btn_handler;
 mod configs;
-//mod device_helpers;
+mod device_helpers;
 mod block_manager;
 mod prints_redirector;
 mod serial;
-
 use std::thread;
-
 use configs::Configs;
 use tokio::task;
 
@@ -29,7 +27,7 @@ async fn main() {
     }
 
     if let Some(screenshot_configs) = configs.screenshot_configs {
-        if screenshot_configs.enabled {
+        if screenshot_configs.enabled && screenshot_configs.screenshots_watch_dir.is_some() {
             task::spawn(async move {
                 prints_redirector::iniciar(screenshot_configs).await;
             });

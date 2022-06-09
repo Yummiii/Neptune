@@ -3,13 +3,15 @@ use figment::{
     Figment,
 };
 use serde::Deserialize;
+use whoami::username;
 
 #[derive(Deserialize, Debug)]
 
 pub struct ScreenshotConfigs {
     pub enabled: bool,
-    pub screenshots_path: String,
-    pub screenshots_redirect_path: String
+    pub initial_check: Option<bool>,
+    pub screenshots_watch_dir: Option<String>,
+    pub screenshots_target_dir: Option<String>
 }
 
 #[derive(Deserialize, Debug)]
@@ -27,8 +29,9 @@ pub struct Configs {
 
 impl Configs {
     pub fn get() -> Self {
+        let configs_file = format!("/home/{}/.config/neptune/neptune.toml", username());
         Figment::new()
-            .merge(Toml::file("neptune.toml"))
+            .merge(Toml::file(configs_file))
             .extract()
             .expect("Erro ao abrir as configurações")
     }
