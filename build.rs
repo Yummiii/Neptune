@@ -4,18 +4,13 @@ fn main() {
 
     let mut builder = cc::Build::new();
     builder.file("clibs/nepnep.c");
+    builder.compiler("cc");
     builder.cpp(true);
 
-    // for (key, value) in std::env::vars_os() {
-    //     println!("cargo:warning={key:?}: {value:?}");
-    // }
-    
-    if let Some(include) = std::env::var_os("DEP_LIBADWAITA_1_INCLUDE") {
-        for dir in include.to_str().unwrap().split(":") {
-            builder.include(dir);
-        }
-    }
+    let libs = pkg_config::Config::new().probe("libadwaita-1").expect("libadwaita-1 not found");
+    libs.include_paths.iter().for_each(|x| {
+        builder.include(x);
+    });
 
-    //println!("cargo:rustc-link-lib=nepnep");
     builder.compile("nepnep");
 }

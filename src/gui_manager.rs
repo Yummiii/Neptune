@@ -8,7 +8,7 @@ lazy_static::lazy_static! {
     static ref BLOCK_IMG: Mutex<CString> = Mutex::new(CString::new("").unwrap());
 }
 
-extern {
+extern "C" {
     fn top_nep(path: *const c_char);
     fn down_nep();
 }
@@ -37,7 +37,8 @@ pub async fn kill_screen() {
         down_nep();
     }
     PROCESS_LIST.lock().await.iter().for_each(|id| {
-        run_script::spawn_script!(format!("kill -9 $(pstree -p {} | grep -o '[0-9]*')", id)).unwrap();
+        run_script::spawn_script!(format!("kill -9 $(pstree -p {} | grep -o '[0-9]*')", id))
+            .unwrap();
     });
     PROCESS_LIST.lock().await.clear();
 }
