@@ -7,11 +7,14 @@ static void activate_cb(GtkApplication *app)
 {
   GdkDisplay *display = gdk_display_get_default();
   GListModel *monitors = gdk_display_get_monitors(display);
-  int suicidio = g_list_model_get_n_items(monitors);;
+  int suicidio = g_list_model_get_n_items(monitors);
+  ;
 
   for (int i = 0; i < suicidio; i++)
   {
     GtkWidget *window = adw_application_window_new(app);
+
+    gtk_widget_set_cursor_from_name(window, "none");
     gtk_window_set_destroy_with_parent(GTK_WINDOW(window), true);
     gtk_window_set_default_size(GTK_WINDOW(window), 545, 735);
 
