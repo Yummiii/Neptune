@@ -17,7 +17,7 @@ pub struct ScreenshotConfigs {
 #[derive(Deserialize, Debug, Clone)]
 pub struct ScreenLockConfigs {
     pub enabled: bool,
-    pub disable_input: Option<bool>,
+    pub grab_input: Option<bool>,
     pub serial_port: Option<String>,
     pub screenlock_img: Option<String>
 }

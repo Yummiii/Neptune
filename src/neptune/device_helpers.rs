@@ -10,7 +10,7 @@ pub fn get_keyboard_num() -> i32 {
 }
 
 pub fn get_mouse_num() -> i32 {
-    let (code, output, _) = run_script::run_script!(r#"grep -E 'Handlers|EV=' /proc/bus/input/devices | grep -B1 'EV=12001f' | grep -Eo 'event[0-9]+' | grep -Eo '[0-9]+' | tr -d '\n'"#, &vec![], &ScriptOptions::new()).unwrap();
+    let (code, output, _) = run_script::run_script!(r#"grep -E 'Handlers|EV=' /proc/bus/input/devices | grep -B1 'EV=17' | grep -Eo 'event[0-9]+' | grep -Eo '[0-9]+' | tr -d '\n'"#, &vec![], &ScriptOptions::new()).unwrap();
     if code == 0 {
         output.parse::<i32>().unwrap()
     } else {
