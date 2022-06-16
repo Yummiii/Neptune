@@ -15,16 +15,4 @@ fn main() {
     if !Path::new(&configs_file).exists() {
         File::create(&configs_file).unwrap();
     }
-
-    let mut builder = cc::Build::new();
-    builder.file("src/gui_manager/clibs/nepnep.c");
-    builder.compiler("cc");
-    builder.cpp(true);
-
-    let libs = pkg_config::Config::new().probe("libadwaita-1").expect("libadwaita-1 not found");
-    libs.include_paths.iter().for_each(|x| {
-        builder.include(x);
-    });
-
-    builder.compile("nepnep");
 }
