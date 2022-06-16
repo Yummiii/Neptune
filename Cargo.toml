@@ -2,33 +2,12 @@
 name = "neptune"
 version = "0.1.0"
 edition = "2021"
-default-run = "neptune"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[[bin]]
-name = "neptune"
-path = "src/neptune/main.rs"
-
-[[bin]]
-name = "neptune_gui_block_manager"
-path = "src/gui_manager/main.rs"
-
 [dependencies]
-chrono = "0.4.19"
-hotwatch = "0.4.6"
-run_script = "0.9.0"
-fs_extra = "1.2.0"
-serialport = "4.1.0"
-tokio = { version = "1.17.0", features = ["macros", "rt-multi-thread", "sync"] }
-lazy_static = "1.4.0"
+libadwaita = "0.1.1"
+clap = { version = "3.1.18", features = ["derive"] }
 figment = { version = "0.10.6", features = ["toml"] }
 serde = { version = "1.0.137", features = ["derive"] }
-whoami = "1.2.1"
-reqwest = "0.11.11"
-libadwaita = "0.1.1"
-clap = { version = "3.2.4", features = ["derive"] }
-
-[build-dependencies]
-whoami = "1.2.1"
-run_script = "0.9.0"
+tokio = { version = "1.17.0", features = ["macros", "rt-multi-thread", "sync"] }
