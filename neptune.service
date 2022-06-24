@@ -1,0 +1,10 @@
+[Service]
+Restart=always
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=neptune
+Environment="RUST_LOG=info"
+ExecStart=%h/.cargo/bin/neptune daemon
+
+[Install]
+WantedBy=graphical-session.target
