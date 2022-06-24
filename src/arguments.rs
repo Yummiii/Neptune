@@ -15,9 +15,9 @@ pub enum Commands {
         #[clap(value_parser, short, long, default_value_t = false)]
         show_cursor: bool
     },
-    Daemons {
-        #[clap(value_parser, short, long, default_value = "a")]
-        config_file: String
+    DAEMON {
+        #[clap(value_parser, short, long)]
+        config_file: Option<String>
     }
 }
 
