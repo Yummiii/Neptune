@@ -23,9 +23,11 @@ pub fn open_block_gui( image: Option<String>, show_cursor: bool) {
             window.fullscreen_on_monitor(&monitor);
 
             if let Some(img) = &image {
-                let geometry = monitor.geometry();
-                let pixbuf = Pixbuf::from_file_at_scale(img, geometry.width(), geometry.height(), true).unwrap();
-                window.set_content(Some(&Picture::for_pixbuf(&pixbuf)))
+                if img != "" {
+                    let geometry = monitor.geometry();
+                    let pixbuf = Pixbuf::from_file_at_scale(img, geometry.width(), geometry.height(), true).unwrap();
+                    window.set_content(Some(&Picture::for_pixbuf(&pixbuf)))
+                }
             }
 
             if !show_cursor {

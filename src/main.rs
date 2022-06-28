@@ -9,7 +9,7 @@ mod gui_manager;
 
 #[tokio::main]
 async fn main() {
-    pretty_env_logger::init();
+    pretty_env_logger::init_custom_env("NEPTUNE_LOG");
     let args = LaunchOptions::build();    
     trace!("Received arguments: {:?}", args);
     match args.command {

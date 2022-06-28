@@ -1,23 +1,24 @@
+use rand::prelude::SliceRandom;
 use tokio::sync::Mutex;
 
 use super::device_helpers;
 
 lazy_static::lazy_static! {
     static ref PROCESS_LIST: Mutex<Vec<u32>> = Mutex::new(Vec::new());
-    static ref BLOCK_IMG: Mutex<String> = Mutex::new("".to_string());
+    static ref BLOCK_IMG: Mutex<Vec<String>> = Mutex::new(Vec::new());
     static ref GRAB_INPUT: Mutex<bool> = Mutex::new(false);
 }
 
 pub async fn set_img(img: &String) {
     if img != "" {
-        debug!("Block image: {}", img);
-        *BLOCK_IMG.lock().await = img.to_string();   
+        debug!("Added block image: {}", img);
+        BLOCK_IMG.lock().await.push(img.to_string());
     }
 }
 
 pub async fn set_grab_input(grab_input: bool) {
     if grab_input {
-        debug!("Grabbing input");
+        debug!("Grab input enabled");
         *GRAB_INPUT.lock().await = grab_input;
     }
 }
@@ -25,7 +26,8 @@ pub async fn set_grab_input(grab_input: bool) {
 pub async fn block_screen() {
     if PROCESS_LIST.lock().await.len() == 0 {
         let grab_input = *GRAB_INPUT.lock().await;
-        let cmd = format!("neptune gui -i \"{}\" {}", BLOCK_IMG.lock().await, if !grab_input { "-s" } else { "" });
+        let img = BLOCK_IMG.lock().await;
+        let cmd = format!("neptune gui -i \"{}\" {}", img.choose(&mut rand::thread_rng()).unwrap_or(&"".into()), if !grab_input { "-s" } else { "" });
 
         if grab_input {
             PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("evtest --grab /dev/input/event{} > /dev/null", device_helpers::get_keyboard_num())).unwrap().id());

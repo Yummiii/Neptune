@@ -20,7 +20,11 @@ pub fn start(config_file: Option<String>) {
                 });
             }
             task::spawn(async move {
-                block_manager::set_img(&cfgs.screenlock_img.unwrap_or("".into())).await;
+                if let Some(imgs) = &cfgs.screenlock_imgs {
+                    for img in imgs {
+                        block_manager::set_img(img).await;
+                    }
+                }
                 block_manager::set_grab_input(cfgs.grab_input.unwrap_or(false)).await;
             });
         }
