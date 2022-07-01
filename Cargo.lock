@@ -853,6 +853,7 @@ dependencies = [
  "serde",
  "serialport",
  "tokio",
+ "walkdir",
 ]
 
 [[package]]

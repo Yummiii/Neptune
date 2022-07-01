@@ -2,6 +2,7 @@ use self::configs::Configs;
 use crate::daemon::screenlock::{block_manager, serial};
 use std::thread;
 use tokio::task;
+use walkdir::WalkDir;
 
 mod configs;
 mod screenlock;
@@ -25,6 +26,13 @@ pub fn start(config_file: Option<String>) {
                         block_manager::set_img(img).await;
                     }
                 }
+
+                if let Some(dir) = &cfgs.screenlock_imgs_dir {
+                    for file in WalkDir::new(dir).into_iter().filter_map(|e| e.ok()) {
+                        block_manager::set_img(&file.path().display().to_string()).await;
+                    }
+                }
+
                 block_manager::set_grab_input(cfgs.grab_input.unwrap_or(false)).await;
             });
         }

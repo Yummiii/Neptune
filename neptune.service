@@ -3,7 +3,7 @@ Restart=always
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=neptune
-Environment="RUST_LOG=info"
+Environment="NEPTUNE_LOG=debug"
 ExecStart=%h/.cargo/bin/neptune daemon
 
 [Install]

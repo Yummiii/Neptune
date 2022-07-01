@@ -18,7 +18,8 @@ pub struct ScreenLockConfigs {
     pub enabled: bool,
     pub grab_input: Option<bool>,
     pub serial_port: Option<String>,
-    pub screenlock_imgs: Option<Vec<String>>
+    pub screenlock_imgs: Option<Vec<String>>,
+    pub screenlock_imgs_dir: Option<String>
 }
 
 #[derive(Deserialize, Debug)]

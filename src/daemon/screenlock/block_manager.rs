@@ -11,7 +11,7 @@ lazy_static::lazy_static! {
 
 pub async fn set_img(img: &String) {
     if img != "" {
-        debug!("Added block image: {}", img);
+        debug!("Added block image: [{}]", img);
         BLOCK_IMG.lock().await.push(img.to_string());
     }
 }
@@ -28,12 +28,13 @@ pub async fn block_screen() {
         let grab_input = *GRAB_INPUT.lock().await;
         let img = BLOCK_IMG.lock().await;
         let cmd = format!("neptune gui -i \"{}\" {}", img.choose(&mut rand::thread_rng()).unwrap_or(&"".into()), if !grab_input { "-s" } else { "" });
-
+        
         if grab_input {
             PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("evtest --grab /dev/input/event{} > /dev/null", device_helpers::get_keyboard_num())).unwrap().id());
             PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("evtest --grab /dev/input/event{} > /dev/null", device_helpers::get_mouse_num())).unwrap().id());
         }        
 
+        debug!("Neptune GUI: [{}]", cmd);
         PROCESS_LIST.lock().await.push(run_script::spawn_script!(cmd).unwrap().id());
     }
 }
