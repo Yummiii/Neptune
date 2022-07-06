@@ -14,6 +14,6 @@ async fn main() {
     trace!("Received arguments: {:?}", args);
     match args.command {
         Commands::GUI { image, show_cursor } => gui_manager::open_block_gui(image, show_cursor),
-        Commands::DAEMON { config_file } => daemon::start(config_file)
+        Commands::DAEMON { config_file } => daemon::start(config_file).await
     }
 }

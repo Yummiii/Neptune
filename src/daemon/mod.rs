@@ -1,6 +1,6 @@
 use self::configs::Configs;
 use crate::daemon::screenlock::{block_manager, serial};
-use std::thread;
+use futures::future;
 use tokio::task;
 use walkdir::WalkDir;
 
@@ -8,7 +8,7 @@ mod configs;
 mod screenlock;
 mod screenshots;
 
-pub fn start(config_file: Option<String>) {
+pub async fn start(config_file: Option<String>) {
     let configs = Configs::get(config_file.unwrap_or(format!("{}/.config/neptune/config.toml", env!("HOME"))),);
     trace!("Loaded configs: {:?}", configs);
 
@@ -47,5 +47,6 @@ pub fn start(config_file: Option<String>) {
         }
     }
 
-    thread::park();
+    future::pending::<()>().await;
+    unreachable!("Daemon stopped")
 }
