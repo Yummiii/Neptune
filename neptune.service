@@ -1,3 +1,7 @@
+[Unit]
+Description=Cool things
+After=default.target
+
 [Service]
 Restart=always
 StandardOutput=journal
@@ -5,6 +9,7 @@ StandardError=journal
 SyslogIdentifier=neptune
 Environment="NEPTUNE_LOG=debug"
 ExecStart=%h/.cargo/bin/neptune daemon
+KillSignal=SIGINT
 
 [Install]
-WantedBy=graphical-session.target
+WantedBy=default.target
