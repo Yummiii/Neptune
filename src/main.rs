@@ -1,6 +1,8 @@
 extern crate pretty_env_logger;
 #[macro_use] extern crate log;
 
+//use std::env::{self, current_exe};
+
 use arguments::{Commands, LaunchOptions};
 
 mod daemon;
@@ -12,6 +14,8 @@ async fn main() {
     pretty_env_logger::init_custom_env("NEPTUNE_LOG");
     let args = LaunchOptions::build();    
     trace!("Received arguments: {:?}", args);
+    //println!("{:?}", current_exe());
+
     match args.command {
         Commands::GUI { image, show_cursor } => gui_manager::open_block_gui(image, show_cursor),
         Commands::DAEMON { config_file } => daemon::start(config_file).await

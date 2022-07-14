@@ -1,3 +1,5 @@
+use std::{process::{self, Command}, env::current_exe};
+
 use rand::prelude::SliceRandom;
 use tokio::sync::Mutex;
 
@@ -27,15 +29,18 @@ pub async fn block_screen() {
     if PROCESS_LIST.lock().await.len() == 0 {
         let grab_input = *GRAB_INPUT.lock().await;
         let img = BLOCK_IMG.lock().await;
-        let cmd = format!("neptune gui -i \"{}\" {}", img.choose(&mut rand::thread_rng()).unwrap_or(&"".into()), if !grab_input { "-s" } else { "" });
-        
+
+        let gui = Command::new(current_exe().unwrap())
+            .args(["-i", &format!("\"{}\"", img.choose(&mut rand::thread_rng()).unwrap_or(&"".into())), if !grab_input { "-s" } else { "" }])
+            .spawn()
+            .unwrap();
+                
         if grab_input {
             PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("evtest --grab /dev/input/event{} > /dev/null", device_helpers::get_keyboard_num())).unwrap().id());
             PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("evtest --grab /dev/input/event{} > /dev/null", device_helpers::get_mouse_num())).unwrap().id());
         }        
-
-        debug!("Neptune GUI: [{}]", cmd);
-        PROCESS_LIST.lock().await.push(run_script::spawn_script!(cmd).unwrap().id());
+        
+        PROCESS_LIST.lock().await.push(gui.id());
     }
 }
 
