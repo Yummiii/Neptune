@@ -1,4 +1,4 @@
-use std::{process::{self, Command}, env::current_exe};
+use std::{process::Command, env::current_exe};
 
 use rand::prelude::SliceRandom;
 use tokio::sync::Mutex;
@@ -29,12 +29,19 @@ pub async fn block_screen() {
     if PROCESS_LIST.lock().await.len() == 0 {
         let grab_input = *GRAB_INPUT.lock().await;
         let img = BLOCK_IMG.lock().await;
+        let img = img.choose(&mut rand::thread_rng());
+        let mut cmd = Command::new(current_exe().unwrap());
 
-        let gui = Command::new(current_exe().unwrap())
-            .args(["-i", &format!("\"{}\"", img.choose(&mut rand::thread_rng()).unwrap_or(&"".into())), if !grab_input { "-s" } else { "" }])
-            .spawn()
-            .unwrap();
-                
+        cmd.arg("gui");
+        if !grab_input {
+            cmd.arg("-s");
+        }
+        if let Some(img) = img {
+            cmd.arg("-i");
+            cmd.arg(img);
+        }
+        let gui = cmd.spawn().unwrap();
+
         if grab_input {
             PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("evtest --grab /dev/input/event{} > /dev/null", device_helpers::get_keyboard_num())).unwrap().id());
             PROCESS_LIST.lock().await.push(run_script::spawn_script!(format!("evtest --grab /dev/input/event{} > /dev/null", device_helpers::get_mouse_num())).unwrap().id());
