@@ -1,7 +1,8 @@
-use crate::daemons::screenlock::send_message;
 use serde::Deserialize;
 use tokio::task;
 use ws::{listen, Message};
+
+use crate::daemons::screenlock;
 
 #[derive(Debug, Deserialize)]
 struct MsgLegal {
@@ -16,7 +17,11 @@ pub fn start_websocket(bind_addr: String) {
             task::spawn(async move {
                 let result: Result<MsgLegal, serde_json::Error> = serde_json::from_str(msg.as_text().unwrap());
                 if let Ok(result) = result {
-                    send_message(result.op, result.image, result.grab_input).await;
+                    if result.op == 0 {
+                        screenlock::block_screen(result.image, result.grab_input).await;
+                    } else if result.op == 1 {
+                        screenlock::kill_screen_block().await;
+                    }
                 } 
             });
 

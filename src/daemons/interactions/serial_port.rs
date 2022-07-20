@@ -1,6 +1,7 @@
-use crate::daemons::screenlock::send_message;
 use chrono::Utc;
 use std::time::Duration;
+
+use crate::daemons::screenlock;
 
 pub async fn start_serial(path: String, rate: u32) {
     info!("Reading from serial port in: {}", path);
@@ -26,15 +27,12 @@ pub async fn start_serial(path: String, rate: u32) {
 async fn btn_released(time_pressed: i64) {
     if time_pressed != 0 {
         debug!("Button pressed for {}ms", time_pressed);
-        let mut cmd = 0;
 
         if time_pressed <= 1000 {
-            cmd = 1;
+            screenlock::block_screen(None, None).await;
         }
         if time_pressed > 1000 {
-            cmd = 2;
+            screenlock::kill_screen_block().await;
         }
-
-        send_message(cmd, None, None).await;
     }
 }

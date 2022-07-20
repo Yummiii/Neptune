@@ -1,6 +1,6 @@
 [screenlock]
 enabled = true
-images = ["/home/yummi/Okayu/hum/b/__elaina_majo_no_tabitabi_drawn_by_sunhyun__5690b868976b3da3b60dec7220bc7061.jpg"]
+images = [""]
 grab_input = true
 
 [interactions.serial_port]
