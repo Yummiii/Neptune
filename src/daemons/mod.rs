@@ -5,6 +5,7 @@ use tokio::task;
 mod configs;
 mod interactions;
 mod screenlock;
+mod screenshots;
 
 pub async fn start_daemons(config_file: Option<String>) {
     info!("Starting daemon");
@@ -27,6 +28,15 @@ pub async fn start_daemons(config_file: Option<String>) {
                 }
 
                 screenlock::init(screenlock.grab_input.unwrap_or(false)).await;
+            });
+        }
+    }
+
+    if let Some(screenshots) = configs.screenshots {
+        if screenshots.enabled && screenshots.screenshots_watch_dir.is_some() {
+            info!("Screenshots redirector enabled");
+            task::spawn(async move {
+                screenshots::iniciar(screenshots).await;
             });
         }
     }

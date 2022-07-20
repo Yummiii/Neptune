@@ -1,6 +1,8 @@
 [screenlock]
 enabled = true
-images = [""]
+images = [
+    ""
+]
 grab_input = true
 
 [interactions.serial_port]

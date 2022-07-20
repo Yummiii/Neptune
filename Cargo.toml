@@ -10,6 +10,8 @@ chrono = "0.4.19"
 clap = { version = "3.2.12", features = ["derive"] }
 dotenv = "0.15.0"
 figment = { version = "0.10.6", features = ["toml"] }
+fs_extra = "1.2.0"
+hotwatch = "0.4.6"
 lazy_static = "1.4.0"
 libadwaita = "0.1.1"
 log = "0.4.17"
