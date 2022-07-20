@@ -1,9 +1,18 @@
 [screenlock]
 enabled = true
 images = [
-    ""
+
+]
+images_dirs = [
+    "/home/yummi/Okayu/hum/b/"
 ]
 grab_input = true
+
+[screenshots]
+enabled = true
+initial_check = true
+screenshots_watch_dir = "/home/yummi/.xdg/pictures/Capturas de tela/"
+screenshots_target_dir = "/home/yummi/Okayu/Printis/%Y-%m/"
 
 [interactions.serial_port]
 enabled = true

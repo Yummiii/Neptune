@@ -14,6 +14,7 @@ pub struct ScreenshotConfigs {
 pub struct ScreenLockConfigs {
     pub enabled: bool,
     pub images: Option<Vec<String>>,
+    pub images_dirs: Option<Vec<String>>,
     pub grab_input: Option<bool>
 }
 
