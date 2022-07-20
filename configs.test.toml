@@ -1,0 +1,13 @@
+[screenlock]
+enabled = true
+images = ["/home/yummi/Okayu/hum/b/__elaina_majo_no_tabitabi_drawn_by_sunhyun__5690b868976b3da3b60dec7220bc7061.jpg"]
+grab_input = true
+
+[interactions.serial_port]
+enabled = true
+rate = 9600
+path = "/dev/ttyUSB0"
+
+[interactions.websocket]
+enabled = true
+bind_addr = "0.0.0.0:3012"

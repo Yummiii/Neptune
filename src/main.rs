@@ -1,23 +1,44 @@
 extern crate pretty_env_logger;
 #[macro_use] extern crate log;
 
-//use std::env::{self, current_exe};
+use clap::{Parser, Subcommand};
 
-use arguments::{Commands, LaunchOptions};
+mod gui;
+mod daemons;
 
-mod daemon;
-mod arguments;
-mod gui_manager;
+#[derive(Parser, Debug)]
+#[clap(version = env!("CARGO_PKG_VERSION"), author = "Yummi")]
+struct Args {
+    #[clap(subcommand)]
+    pub command: Commands,
+}
+
+#[derive(Subcommand, Debug)]
+enum Commands {
+    /// Opens the GUI
+    GUI {
+        #[clap(value_parser, short, long)]
+        image: Option<String>,
+        #[clap(value_parser, short, long, default_value_t = false)]
+        show_cursor: bool,
+        #[clap(value_parser, short, long, default_value_t = false)]
+        windowed: bool
+    },
+    /// Starts the neptune daemon
+    DAEMON {
+        #[clap(value_parser, short, long)]
+        config_file: Option<String>,
+    },
+}
 
 #[tokio::main]
 async fn main() {
+    dotenv::dotenv().ok();
     pretty_env_logger::init_custom_env("NEPTUNE_LOG");
-    let args = LaunchOptions::build();    
-    trace!("Received arguments: {:?}", args);
-    //println!("{:?}", current_exe());
 
+    let args = Args::parse();
     match args.command {
-        Commands::GUI { image, show_cursor } => gui_manager::open_block_gui(image, show_cursor),
-        Commands::DAEMON { config_file } => daemon::start(config_file).await
+        Commands::GUI { image, show_cursor, windowed } => gui::open_gui(image, show_cursor, windowed),
+        Commands::DAEMON { config_file } => daemons::start_daemons(config_file).await,
     }
 }
