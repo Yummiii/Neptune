@@ -23,8 +23,7 @@ pub fn start_websocket(bind_addr: String) {
                         screenlock::kill_screen_block().await;
                     }
                 } 
-            });
-
+            });            
             out.send(Message::Text("massa".to_string()))
         }
     })

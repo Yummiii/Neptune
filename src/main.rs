@@ -1,3 +1,5 @@
+#![feature(proc_macro_hygiene)]
+extern crate command_macros;
 extern crate pretty_env_logger;
 #[macro_use] extern crate log;
 
@@ -22,7 +24,10 @@ enum Commands {
         #[clap(value_parser, short, long, default_value_t = false)]
         show_cursor: bool,
         #[clap(value_parser, short, long, default_value_t = false)]
-        windowed: bool
+        windowed: bool,
+        /// This does literally nothing
+        #[clap(value_parser, short, long, default_value_t = false)]
+        nothing: bool
     },
     /// Starts the neptune daemon
     DAEMON {
@@ -38,7 +43,7 @@ async fn main() {
 
     let args = Args::parse();
     match args.command {
-        Commands::GUI { image, show_cursor, windowed } => gui::open_gui(image, show_cursor, windowed),
+        Commands::GUI { image, show_cursor, windowed, nothing: _ } => gui::open_gui(image, show_cursor, windowed),
         Commands::DAEMON { config_file } => daemons::start_daemons(config_file).await,
     }
 }
