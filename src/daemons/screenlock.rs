@@ -1,4 +1,5 @@
-use std::{env::current_exe, process::Command};
+use std::{env::current_exe};
+use command_macros::command;
 use rand::prelude::SliceRandom;
 use tokio::sync::Mutex;
 
@@ -22,25 +23,20 @@ pub async fn block_screen(image: Option<String>, grab_input: Option<bool>) {
     if !*ACTIVE.lock().await {
         info!("Screen block start");
 
-        let mut cmd = Command::new(current_exe().unwrap());
-        cmd.arg("gui");
-        if !grab_input.unwrap_or(*GRAB_INPUT.lock().await) {
-            cmd.arg("-s");
-        }
-    
         let mut img = image.clone();
         if image.is_none() && IMGS.lock().await.len() >= 1 {
             let img_list = IMGS.lock().await;
             img = Some(img_list.choose(&mut rand::thread_rng()).unwrap().to_string());
         }
     
-        if let Some(img) = img {
-            cmd.arg("-i");
-            cmd.arg(img);
-        }
-    
-        let gui = cmd.spawn().unwrap();
-        PROCESS_LIST.lock().await.push(gui.id());
+        let mut gui = command!((current_exe().unwrap()) gui 
+            (if img.is_some() { format!("-i {}", img.unwrap()) } else { "-n".to_string() }) 
+            (if !grab_input.unwrap_or(*GRAB_INPUT.lock().await) { "-s" } else { "-n" })
+        );     
+        
+        info!("{:?}", gui);
+        PROCESS_LIST.lock().await.push(gui.spawn().unwrap().id());
+
         *ACTIVE.lock().await = true;
     }
 }
