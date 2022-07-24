@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use figment::{Figment, providers::{Toml, Format}};
 use serde::Deserialize;
 
@@ -11,8 +13,9 @@ pub struct ScreenshotConfigs {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct ScreenLockConfigs {
+pub struct ScreenLockProfileConfigs {
     pub enabled: bool,
+    pub keys: Option<Vec<String>>,
     pub images: Option<Vec<String>>,
     pub images_dirs: Option<Vec<String>>,
     pub grab_input: Option<bool>,
@@ -41,7 +44,7 @@ pub struct InteractionsConfigs {
 #[derive(Deserialize, Debug)]
 pub struct Configs {
     pub interactions: Option<InteractionsConfigs>,
-    pub screenlock: Option<ScreenLockConfigs>,
+    pub screenlock: Option<HashMap<String, ScreenLockProfileConfigs>>,
     pub screenshots: Option<ScreenshotConfigs>
 }
 

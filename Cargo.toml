@@ -10,6 +10,7 @@ chrono = "0.4.19"
 clap = { version = "3.2.12", features = ["derive"] }
 command-macros = { version = "0.2.9", features = ["nightly"] }
 dotenv = "0.15.0"
+evdev = "0.11.4"
 figment = { version = "0.10.6", features = ["toml"] }
 fs_extra = "1.2.0"
 hotwatch = "0.4.6"

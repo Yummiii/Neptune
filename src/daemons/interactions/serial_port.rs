@@ -29,7 +29,7 @@ async fn btn_released(time_pressed: i64) {
         debug!("Button pressed for {}ms", time_pressed);
 
         if time_pressed <= 1000 {
-            screenlock::block_screen(None, None, None).await;
+            screenlock::block_screen().await;
         }
         if time_pressed > 1000 {
             screenlock::kill_screen_block().await;

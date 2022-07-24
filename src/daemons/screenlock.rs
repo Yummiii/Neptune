@@ -1,57 +1,41 @@
-use std::{env::current_exe, process::{Child, Stdio}};
+use crate::daemons::{configs::ScreenLockProfileConfigs, profile_extensions::get_image};
+use std::{process::Child, str::FromStr, env::current_exe};
 use command_macros::command;
-use rand::prelude::SliceRandom;
-use run_script::ScriptOptions;
+use evdev::{Device, Key};
 use tokio::sync::Mutex;
 
 lazy_static::lazy_static! {
     static ref PROCESS_LIST: Mutex<Vec<Child>> = Mutex::new(Vec::new());
-    static ref GRAB_INPUT: Mutex<bool> = Mutex::new(false);
-    static ref WINDOWED: Mutex<bool> = Mutex::new(false);
-    static ref IMGS: Mutex<Vec<String>> = Mutex::new(Vec::new());
+    static ref PROFILES: Mutex<Vec<ScreenLockProfileConfigs>> = Mutex::new(Vec::new());
 }
 
-pub async fn init(grab_input: bool, windowed: bool) {
-    *GRAB_INPUT.lock().await = grab_input;
-    *WINDOWED.lock().await = windowed;
+pub async fn add_profile(profile: ScreenLockProfileConfigs) {
+    PROFILES.lock().await.push(profile);
 }
 
-pub async fn add_img(img: String) {
-    info!("Added image: [{}]", img);
-    IMGS.lock().await.push(img);
-}
-
-pub async fn block_screen(image: Option<String>, grab_input: Option<bool>, windowed: Option<bool>) {
+pub async fn block_screen() {
     let mut procs = PROCESS_LIST.lock().await;
-    if procs.len() == 0 {
-        info!("Screen block start");
 
-        let grab_input = grab_input.unwrap_or(*GRAB_INPUT.lock().await);
-        let mut img = image.clone();
-        if image.is_none() && IMGS.lock().await.len() >= 1 {
-            let img_list = IMGS.lock().await;
-            img = Some(img_list.choose(&mut rand::thread_rng()).unwrap().to_string());
-        }
+    //foi o jeito q deu pra fazer
+    let mut device = Device::open("/dev/input/event2").unwrap();
+    println!("{:?}", device.grab());
+
+    let profiles = PROFILES.lock().await;
+    let profiles: Vec<&ScreenLockProfileConfigs> = profiles.iter().filter(|x| {
+        let keys: Vec<Key> = x.keys.as_ref().unwrap().iter().map(|key| Key::from_str(key).unwrap()).collect();
+        keys == device.get_key_state().unwrap().iter().collect::<Vec<Key>>()
+    }).collect();
+    let profile = profiles.first().unwrap();
     
-        let mut gui = command!((current_exe().unwrap()) gui 
-            -i (if img.is_some() { img.unwrap() } else { "".to_string() }) 
-            (if !grab_input { "-s" } else { "-n" })
-            (if windowed.unwrap_or(*WINDOWED.lock().await) { "-w" } else { "-n" })
-        );     
-        
-        if grab_input {
-            let mut keyboard = command!(evtest --grab /dev/input/event(get_keyboard_num()));
-            keyboard.stdout(Stdio::null());
-            procs.push(keyboard.spawn().unwrap());
+    let img = get_image(profile);
+    let mut gui = command!((current_exe().unwrap()) gui 
+        -i (if img.is_some() { img.unwrap() } else { "".to_string() }) 
+        -w
+        //(if !grab_input { "-s" } else { "-n" })
+        //(if windowed.unwrap_or(*WINDOWED.lock().await) { "-w" } else { "-n" })
+    );     
 
-            let mut mouse = command!(evtest --grab /dev/input/event(get_mouse_num()));
-            mouse.stdout(Stdio::null());
-            procs.push(mouse.spawn().unwrap());
-        }
-
-        info!("{:?}", gui);
-        procs.push(gui.spawn().unwrap());
-    }
+    procs.push(gui.spawn().unwrap());
 }
 
 pub async fn kill_screen_block() {
@@ -59,24 +43,4 @@ pub async fn kill_screen_block() {
     let mut procs = PROCESS_LIST.lock().await;
     procs.iter_mut().for_each(|proc| proc.kill().unwrap());
     procs.clear();
-}
-
-
-//por algum motivo isso sempre funciona
-fn get_keyboard_num() -> String {
-    let (code, output, _) = run_script::run_script!(r#"grep -E 'Handlers|EV=' /proc/bus/input/devices | grep -B1 'EV=120013' | grep -Eo 'event[0-9]+' | grep -Eo '[0-9]+' | tr -d '\n'"#, &vec![], &ScriptOptions::new()).unwrap();
-    if code == 0 {
-        output
-    } else {
-        panic!("não achei o numero do teclado")
-    }
-}
-
-fn get_mouse_num() -> String {
-    let (code, output, _) = run_script::run_script!(r#"grep -E 'Handlers|EV=' /proc/bus/input/devices | grep -B1 'EV=17' | grep -Eo 'event[0-9]+' | grep -Eo '[0-9]+' | tr -d '\n'"#, &vec![], &ScriptOptions::new()).unwrap();
-    if code == 0 {
-        output
-    } else {
-        panic!("não achei o numero do mouse")
-    }
 }

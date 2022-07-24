@@ -1,12 +1,12 @@
 use self::configs::Configs;
 use std::thread;
 use tokio::task;
-use walkdir::WalkDir;
 
 mod configs;
 mod interactions;
 mod screenlock;
 mod screenshots;
+mod profile_extensions;
 
 pub async fn start_daemons(config_file: Option<String>) {
     info!("Starting daemon");
@@ -19,28 +19,13 @@ pub async fn start_daemons(config_file: Option<String>) {
         interactions::start_interactions(interactions).await;
     }
 
-    if let Some(screenlock) = configs.screenlock {
-        println!("{:#?}", screenlock);
-        // if screenlock.enabled {
-        //     task::spawn(async move {
-        //         if let Some(imgs) = screenlock.images {
-        //             for img in imgs {
-        //                 screenlock::add_img(img).await;
-        //             }
-        //         }
+    if let Some(profiles) = configs.screenlock {
+        for profile in profiles {
+            info!("Loading profile: {}", profile.0);
+            debug!("{:?}", profile.1);
 
-        //         if let Some(dirs) = screenlock.images_dirs {
-        //             for dir in dirs {
-        //                 println!("{}", dir);
-        //                 for file in WalkDir::new(dir).into_iter().filter_map(|e| e.ok()) {
-        //                     screenlock::add_img(file.path().display().to_string()).await;
-        //                 }
-        //             }
-        //         }
-
-        //         screenlock::init(screenlock.grab_input.unwrap_or(false), screenlock.windowed.unwrap_or(false)).await;
-        //     });
-        // }
+            screenlock::add_profile(profile.1).await;
+        }
     }
 
     if let Some(screenshots) = configs.screenshots {
