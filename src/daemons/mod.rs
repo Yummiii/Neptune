@@ -20,6 +20,8 @@ pub async fn start_daemons(config_file: Option<String>) {
     }
 
     if let Some(profiles) = configs.screenlock {
+        screenlock::init().await;
+
         for profile in profiles {
             info!("Loading profile: {}", profile.0);
             debug!("{:?}", profile.1);
