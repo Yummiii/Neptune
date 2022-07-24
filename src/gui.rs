@@ -18,7 +18,7 @@ pub fn open_gui(image: Option<String>, show_cursor: bool, windowed: bool) {
         let display = Display::default().expect("No display found");
         let monitors = display.monitors();
 
-        for i in 0..monitors.n_items() {
+        for i in 0..if windowed { 1 } else { monitors.n_items() } {
             let monitor = monitors.item(i).unwrap().dynamic_cast::<Monitor>().unwrap();
             let window = ApplicationWindow::new(app);
             if !windowed {

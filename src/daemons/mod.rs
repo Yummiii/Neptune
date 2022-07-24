@@ -20,25 +20,27 @@ pub async fn start_daemons(config_file: Option<String>) {
     }
 
     if let Some(screenlock) = configs.screenlock {
-        if screenlock.enabled {
-            task::spawn(async move {
-                if let Some(imgs) = screenlock.images {
-                    for img in imgs {
-                        screenlock::add_img(img).await;
-                    }
-                }
+        println!("{:#?}", screenlock);
+        // if screenlock.enabled {
+        //     task::spawn(async move {
+        //         if let Some(imgs) = screenlock.images {
+        //             for img in imgs {
+        //                 screenlock::add_img(img).await;
+        //             }
+        //         }
 
-                if let Some(dirs) = screenlock.images_dirs {
-                    for dir in dirs {
-                        for file in WalkDir::new(dir).into_iter().filter_map(|e| e.ok()) {
-                            screenlock::add_img(file.path().display().to_string()).await;
-                        }
-                    }
-                }
+        //         if let Some(dirs) = screenlock.images_dirs {
+        //             for dir in dirs {
+        //                 println!("{}", dir);
+        //                 for file in WalkDir::new(dir).into_iter().filter_map(|e| e.ok()) {
+        //                     screenlock::add_img(file.path().display().to_string()).await;
+        //                 }
+        //             }
+        //         }
 
-                screenlock::init(screenlock.grab_input.unwrap_or(false)).await;
-            });
-        }
+        //         screenlock::init(screenlock.grab_input.unwrap_or(false), screenlock.windowed.unwrap_or(false)).await;
+        //     });
+        // }
     }
 
     if let Some(screenshots) = configs.screenshots {

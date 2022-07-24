@@ -15,7 +15,8 @@ pub struct ScreenLockConfigs {
     pub enabled: bool,
     pub images: Option<Vec<String>>,
     pub images_dirs: Option<Vec<String>>,
-    pub grab_input: Option<bool>
+    pub grab_input: Option<bool>,
+    pub windowed: Option<bool>
 }
 
 #[derive(Debug, Deserialize)]
