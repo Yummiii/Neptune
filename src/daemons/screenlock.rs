@@ -12,8 +12,8 @@ lazy_static::lazy_static! {
 }
 
 pub async fn init() {
-    *KEYBOARD.lock().await = Some(Device::open("/dev/input/event2").unwrap());
-    *MOUSE.lock().await = Some(Device::open("/dev/input/event3").unwrap());
+    *KEYBOARD.lock().await = Some(Device::open("/dev/input/event3").unwrap());
+    *MOUSE.lock().await = Some(Device::open("/dev/input/event4").unwrap());
 }
 
 pub async fn add_profile(profile: ScreenLockProfileConfigs) {
@@ -62,12 +62,17 @@ pub async fn block_screen() {
         (if profile.windowed.unwrap() { "-w" } else { "-n" })
     );
 
+    info!("{:?}", gui);
+
     procs.push(gui.spawn().unwrap());
 }
 
 pub async fn kill_screen_block() {
     info!("Kill screen block");
     let mut procs = PROCESS_LIST.lock().await;
-    procs.iter_mut().for_each(|proc| proc.kill().unwrap());
+    procs.iter_mut().for_each(|proc| {     
+        let mut cmd = command!(kill -9 (proc.id().to_string()));
+        cmd.spawn().unwrap();
+    });
     procs.clear();
 }
