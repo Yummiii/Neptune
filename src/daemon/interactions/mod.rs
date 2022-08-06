@@ -1,30 +1,13 @@
 use tokio::task;
-
 use super::configs::InteractionsConfigs;
 
-mod serial_port;
+mod grpc;
 
-
-pub async fn start_interactions(interctions_configs: InteractionsConfigs) {
+pub fn start_interactions(interctions_configs: InteractionsConfigs) {
     info!("Starting interactions");
-
-    if let Some(serial_port) = interctions_configs.serial_port {
-        if serial_port.path.is_some() {
-            task::spawn(async move {
-                serial_port::start_serial(
-                    serial_port.path.unwrap(),
-                    serial_port.rate.unwrap_or(9600),
-                )
-                .await;
-            });
-        }
+    if let Some(grpc) = interctions_configs.grpc {
+        task::spawn(async {
+            grpc::grpc_init(grpc.bind_addr.unwrap_or("127.0.0.1:3127".to_owned())).await;
+        });
     }
-
-    // if let Some(websocket) = interctions_configs.websocket {
-    //     if websocket.enabled {
-    //         task::spawn(async move {
-    //             websocket::start_websocket(websocket.bind_addr.unwrap_or("127.0.0.1:0".to_string()));
-    //         });
-    //     }
-    // }
 }

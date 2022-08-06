@@ -13,7 +13,7 @@ pub async fn start_daemon(config_file: Option<String>) {
     trace!("{:?}", configs);
 
     if let Some(interactions) = configs.interactions {
-        interactions::start_interactions(interactions).await;
+        interactions::start_interactions(interactions);
     }
 
     if let Some(profiles_cfg) = configs.screenlock {

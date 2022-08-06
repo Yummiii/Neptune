@@ -22,20 +22,13 @@ pub struct ScreenLockProfileConfigs {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct SerialPortConfigs {
-    pub path: Option<String>,
-    pub rate: Option<u32>,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct WebsocketConfigs {
+pub struct GrpcConfigs {
     pub bind_addr: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct InteractionsConfigs {
-    pub serial_port: Option<SerialPortConfigs>,
-    pub websocket: Option<WebsocketConfigs>,
+    pub grpc: Option<GrpcConfigs>,
 }
 
 #[derive(Deserialize, Debug)]

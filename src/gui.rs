@@ -1,3 +1,4 @@
+use chrono::Utc;
 use libadwaita::{
     gdk::{Display, Monitor},
     gio::{ApplicationFlags, File},
@@ -12,7 +13,7 @@ use libadwaita::{
 use std::path::Path;
 
 pub fn open_gui(image: Option<String>, hide_cursor: bool, windowed: bool) {
-    let application = Application::new(Some("moe.yummmi.Neptune"), ApplicationFlags::FLAGS_NONE);
+    let application = Application::new(Some(&format!("moe.yummmi.Neptune_{}", Utc::now().timestamp_millis())), ApplicationFlags::FLAGS_NONE);
 
     application.connect_activate(move |app| {
         let display = Display::default().expect("No display found");

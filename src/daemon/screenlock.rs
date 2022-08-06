@@ -1,11 +1,11 @@
 use super::configs::ScreenLockProfileConfigs;
 use evdev::Key;
 use rand::{seq::SliceRandom, thread_rng};
-use std::{path::Path, str::FromStr, env::current_exe};
+use std::{env::current_exe, path::Path, str::FromStr, process::Child};
 use tokio::sync::Mutex;
 use walkdir::WalkDir;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ScreenlockProfile {
     pub profile_name: String,
     pub images: Vec<String>,
@@ -54,7 +54,8 @@ impl ScreenlockProfile {
 }
 
 lazy_static::lazy_static! {
-    static ref PROFILES: Mutex<Vec<ScreenlockProfile>> = Mutex::new(Vec::new());
+    pub static ref PROFILES: Mutex<Vec<ScreenlockProfile>> = Mutex::new(Vec::new());
+    pub static ref PROCESS_LIST: Mutex<Vec<Child>> = Mutex::new(Vec::new());
 }
 
 pub async fn add_profile(profile: ScreenlockProfile) {
@@ -63,10 +64,32 @@ pub async fn add_profile(profile: ScreenlockProfile) {
     PROFILES.lock().await.push(profile);
 }
 
-pub async fn block_screen() {
-    let profile = &PROFILES.lock().await[0];
-    println!("{}", profile.profile_name);
+pub async fn block_screen(profile: Option<ScreenlockProfile>) {
+    let profiles_list = &*PROFILES.lock().await;
+    let profile = profile.unwrap_or(profiles_list.iter().next().unwrap().clone());
     let img = profile.images.choose(&mut thread_rng()).unwrap();
 
-    run_script::spawn_script!(format!("{} gui -i {} -w", current_exe().unwrap().to_str().unwrap(), img)).ok();
+    let gui = run_script::spawn_script!(format!(
+        "{} gui -i {} {} {}",
+        current_exe().unwrap().to_str().unwrap(),
+        img,
+        if profile.windowed { "-w" } else { "" },
+        if profile.block_input { "-H" } else { "" }
+    ))
+    .unwrap();
+
+    PROCESS_LIST.lock().await.push(gui);
+}
+
+pub async fn kill_screen_block() {
+    PROCESS_LIST.lock().await.iter_mut().for_each(|x| {
+        run_script::spawn_script!(format!("kill $(pstree -p {} | grep -o '[0-9]*')", x.id())).unwrap();
+    });
+    PROCESS_LIST.lock().await.clear();
+}
+
+pub async fn get_profile_by_name(name: String) -> Option<ScreenlockProfile> {
+    let profiles_list = &*PROFILES.lock().await;
+    let profile = profiles_list.iter().find(|x| x.profile_name == name);
+    profile.map(|x| x.clone())
 }

@@ -16,7 +16,7 @@ enum Commands {
     GUI {
         #[clap(value_parser, short, long)]
         image: Option<String>,
-        #[clap(value_parser, short = 'H', long, default_value_t = true)]
+        #[clap(value_parser, short = 'H', long, default_value_t = false)]
         hide_cursor: bool,
         #[clap(value_parser, short, long, default_value_t = false)]
         windowed: bool,
