@@ -1,7 +1,8 @@
 use super::configs::ScreenLockProfileConfigs;
+use async_process::{Child, Command};
 use evdev::Key;
 use rand::{seq::SliceRandom, thread_rng};
-use std::{env::current_exe, path::Path, str::FromStr, process::Child};
+use std::{env::current_exe, path::Path, str::FromStr};
 use tokio::sync::Mutex;
 use walkdir::WalkDir;
 
@@ -65,25 +66,28 @@ pub async fn add_profile(profile: ScreenlockProfile) {
 }
 
 pub async fn block_screen(profile: Option<ScreenlockProfile>) {
-    let profiles_list = &*PROFILES.lock().await;
-    let profile = profile.unwrap_or(profiles_list.iter().next().unwrap().clone());
-    let img = profile.images.choose(&mut thread_rng()).unwrap();
-
-    let gui = run_script::spawn_script!(format!(
-        "{} gui -i {} {} {}",
-        current_exe().unwrap().to_str().unwrap(),
-        img,
-        if profile.windowed { "-w" } else { "" },
-        if profile.block_input { "-H" } else { "" }
-    ))
-    .unwrap();
-
-    PROCESS_LIST.lock().await.push(gui);
+    if !PROCESS_LIST.lock().await.iter_mut().any(|x| x.try_status().unwrap().is_none()) {
+        let profiles_list = &*PROFILES.lock().await;
+        let profile = profile.unwrap_or(profiles_list.iter().next().unwrap().clone());
+    
+        let img = profile.images.choose(&mut thread_rng()).unwrap();
+        let mut gui = Command::new(current_exe().unwrap().to_str().unwrap());
+    
+        gui.args(&["gui", "-i", img]);
+        if profile.windowed {
+            gui.arg("-w");
+        }
+        if profile.block_input {
+            gui.arg("-H");
+        }
+    
+        PROCESS_LIST.lock().await.push(gui.spawn().unwrap());
+    }
 }
 
 pub async fn kill_screen_block() {
     PROCESS_LIST.lock().await.iter_mut().for_each(|x| {
-        run_script::spawn_script!(format!("kill $(pstree -p {} | grep -o '[0-9]*')", x.id())).unwrap();
+        x.kill().unwrap();
     });
     PROCESS_LIST.lock().await.clear();
 }

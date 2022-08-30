@@ -1,0 +1,15 @@
+[Unit]
+Description=Waifus hell
+After=default.target
+
+[Service]
+Restart=always
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=neptune
+Environment="RUST_LOG=info"
+ExecStart={path}
+KillSignal=SIGINT
+
+[Install]
+WantedBy=default.target
