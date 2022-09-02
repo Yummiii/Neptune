@@ -75,7 +75,6 @@ pub async fn block_screen(profile: Option<ScreenlockProfile>) {
         .iter_mut()
         .any(|x| x.try_status().unwrap().is_none())
     {
-        println!("{}", input::are_keys_pressed(vec![]).await);
         let mut selected_profile = None;
 
         if profile.is_some() {
@@ -107,6 +106,8 @@ pub async fn block_screen(profile: Option<ScreenlockProfile>) {
             gui.arg("-w");
         }
         if selected_profile.block_input {
+            input::set_mouse_state(true).await;
+            input::set_keyboard_state(true).await;
             gui.arg("-H");
         }
 
@@ -118,6 +119,8 @@ pub async fn kill_screen_block() {
     PROCESS_LIST.lock().await.iter_mut().for_each(|x| {
         x.kill().unwrap();
     });
+    input::set_mouse_state(false).await;
+    input::set_keyboard_state(false).await;
     PROCESS_LIST.lock().await.clear();
 }
 
