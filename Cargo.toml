@@ -9,6 +9,7 @@ edition = "2021"
 async-process = "1.5.0"
 chrono = "0.4.19"
 clap = { version = "3.2.16", features = ["derive"] }
+command-macros = { version = "0.2.9", features = ["nightly"] }
 dotenv = "0.15.0"
 evdev = "0.12.0"
 figment = { version = "0.10.6", features = ["toml"] }
@@ -21,7 +22,6 @@ notify = "5.0.0"
 pretty_env_logger = "0.4.0"
 prost = "0.11.0"
 rand = "0.8.5"
-run_script = "0.10.0"
 serde = { version = "1.0.141", features = ["derive"] }
 serde_json = { version = "1.0.83", features = ["raw_value"] }
 serde_repr = "0.1.9"

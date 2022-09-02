@@ -1,4 +1,4 @@
-use super::configs::ScreenLockProfileConfigs;
+use super::{configs::ScreenLockProfileConfigs, input};
 use async_process::{Child, Command};
 use evdev::Key;
 use rand::{seq::SliceRandom, thread_rng};
@@ -69,21 +69,47 @@ pub async fn add_profile(profile: ScreenlockProfile) {
 }
 
 pub async fn block_screen(profile: Option<ScreenlockProfile>) {
-    if !PROCESS_LIST.lock().await.iter_mut().any(|x| x.try_status().unwrap().is_none()) {
-        let profiles_list = &*PROFILES.lock().await;
-        let profile = profile.unwrap_or(profiles_list.iter().next().unwrap().clone());
-    
-        let img = profile.images.choose(&mut thread_rng()).unwrap();
+    if !PROCESS_LIST
+        .lock()
+        .await
+        .iter_mut()
+        .any(|x| x.try_status().unwrap().is_none())
+    {
+        println!("{}", input::are_keys_pressed(vec![]).await);
+        let mut selected_profile = None;
+
+        if profile.is_some() {
+            selected_profile = Some(profile.unwrap());
+        } else {
+            let profiles_list = &*PROFILES.lock().await;
+            for prof in profiles_list {
+                if input::are_keys_pressed(prof.keys.clone()).await {
+                    selected_profile = Some(prof.clone());
+                }
+            }
+        }
+
+        let selected_profile = selected_profile.unwrap_or(ScreenlockProfile {
+            profile_name: "default".to_owned(),
+            images: vec![],
+            block_input: false,
+            windowed: false,
+            keys: vec![],
+        });
+
+        //ta foda rust
+        let desgraca = &String::new();
+        let img = selected_profile.images.choose(&mut thread_rng()).unwrap_or(desgraca);
         let mut gui = Command::new(current_exe().unwrap().to_str().unwrap());
-    
-        gui.args(&["gui", "-i", img, "-t", &profile.profile_name]);
-        if profile.windowed {
+
+        gui.args(&["gui", "-i", img, "-t", &selected_profile.profile_name]);
+        if selected_profile.windowed {
             gui.arg("-w");
         }
-        if profile.block_input {
+        if selected_profile.block_input {
             gui.arg("-H");
         }
-    
+
         PROCESS_LIST.lock().await.push(gui.spawn().unwrap());
     }
 }

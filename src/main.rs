@@ -1,6 +1,9 @@
+#![feature(proc_macro_hygiene)]
+extern crate command_macros;
 #[macro_use]
 extern crate log;
 use clap::{Parser, Subcommand};
+use command_macros::command;
 use std::{env::current_exe, fs, path::Path};
 
 mod daemon;
@@ -43,7 +46,7 @@ async fn main() {
             image,
             hide_cursor,
             windowed,
-            title
+            title,
         } => gui::open_gui(image, hide_cursor, windowed, title),
         Commands::DAEMON { config_file } => daemon::start_daemon(config_file).await,
         Commands::ENABLE => enable(),
@@ -52,7 +55,7 @@ async fn main() {
 
 //isso ta muito feio
 fn enable() {
-    run_script::run_script!("systemctl --user stop neptune").unwrap();
+    command!(systemctl --user stop neptune);
     let dir = format!(
         "{}/.config/systemd/user",
         home::home_dir().unwrap().to_str().unwrap()
@@ -68,6 +71,6 @@ fn enable() {
         &format!("{} daemon", current_exe().unwrap().to_str().unwrap()),
     );
     fs::write(dir, service).unwrap();
-    run_script::run_script!("systemctl --user enable --now neptune").unwrap();
+    command!(systemctl --user enable --now neptune);
     println!("Serviço ligado e habilitado na inicialização do sistema :)")
 }

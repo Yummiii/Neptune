@@ -6,12 +6,17 @@ mod configs;
 mod interactions;
 mod screenlock;
 mod screenshots;
+mod input;
 
 pub async fn start_daemon(config_file: Option<String>) {
     let configs = Configs::get(
         config_file.unwrap_or(format!("{}/.config/neptune/config.toml", env!("HOME"))),
     );
     trace!("{:?}", configs);
+
+    task::spawn(async {
+        input::get_devices().await;
+    });
 
     if let Some(interactions) = configs.interactions {
         interactions::start_interactions(interactions);

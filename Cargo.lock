@@ -327,6 +327,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "command-macros"
+version = "0.2.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "246a765b3097ef3ace86928361a05c5b6a18147b0fb4031ccbcd46ffbacacc47"
+dependencies = [
+ "command-macros-plugin",
+]
+
+[[package]]
+name = "command-macros-plugin"
+version = "0.2.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bf17b2dfdf3def935c1dae8f627d1c734661d95b32e98ec8bd0920accde9d117"
+dependencies = [
+ "itertools 0.7.11",
+]
+
+[[package]]
 name = "concurrent-queue"
 version = "1.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -360,12 +378,6 @@ name = "dotenv"
 version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "77c90badedccf4105eca100756a0b1289e191f6fcbdadd3cee1d2f614f97da8f"
-
-[[package]]
-name = "dunce"
-version = "1.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "453440c271cf5577fd2a40e4942540cb7d0d2f85e27c8d07dd0023c925a67541"
 
 [[package]]
 name = "either"
@@ -468,16 +480,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "76ee7a02da4d231650c7cea31349b889be2f45ddb3ef3032d2ec8185f6313fd2"
 dependencies = [
  "libc",
-]
-
-[[package]]
-name = "fsio"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dad0ce30be0cc441b325c5d705c8b613a0ca0d92b6a8953d41bd236dc09a36d0"
-dependencies = [
- "dunce",
- "rand",
 ]
 
 [[package]]
@@ -1033,6 +1035,15 @@ dependencies = [
 
 [[package]]
 name = "itertools"
+version = "0.7.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0d47946d458e94a1b7bcabbf6521ea7c037062c81f534615abcad76e84d4970d"
+dependencies = [
+ "either",
+]
+
+[[package]]
+name = "itertools"
 version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a9a9d19fa1e79b6215ff29b9d6880b706147f16e9b1dbb1e4e5947b5b02bc5e3"
@@ -1171,6 +1182,7 @@ dependencies = [
  "async-process",
  "chrono",
  "clap",
+ "command-macros",
  "dotenv",
  "evdev",
  "figment",
@@ -1183,7 +1195,6 @@ dependencies = [
  "pretty_env_logger",
  "prost",
  "rand",
- "run_script",
  "serde",
  "serde_json",
  "serde_repr",
@@ -1461,7 +1472,7 @@ checksum = "7f835c582e6bd972ba8347313300219fed5bfa52caf175298d860b61ff6069bb"
 dependencies = [
  "bytes",
  "heck",
- "itertools",
+ "itertools 0.10.3",
  "lazy_static",
  "log",
  "multimap",
@@ -1480,7 +1491,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7345d5f0e08c0536d7ac7229952590239e77abf0a0100a1b1d890add6ea96364"
 dependencies = [
  "anyhow",
- "itertools",
+ "itertools 0.10.3",
  "proc-macro2",
  "quote",
  "syn",
@@ -1589,15 +1600,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3acd125665422973a33ac9d3dd2df85edad0f4ae9b00dafb1a05e43a9f5ef8e7"
 dependencies = [
  "winapi",
-]
-
-[[package]]
-name = "run_script"
-version = "0.10.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7fdc55b3a7ad58e02de47eaf7a854c6791c8421da48ff296c152317d3beaf230"
-dependencies = [
- "fsio",
 ]
 
 [[package]]
