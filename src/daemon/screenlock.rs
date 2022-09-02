@@ -23,7 +23,10 @@ impl ScreenlockProfile {
             cfg_imgs.into_iter().for_each(|i| {
                 if Path::new(&i).exists() {
                     for file in WalkDir::new(i).into_iter().filter_map(|e| e.ok()) {
-                        images.push(file.path().display().to_string());
+                        let file = file.path();
+                        if file.is_file() {
+                            images.push(file.display().to_string());
+                        }
                     }
                 } else {
                     images.push(i);
@@ -73,7 +76,7 @@ pub async fn block_screen(profile: Option<ScreenlockProfile>) {
         let img = profile.images.choose(&mut thread_rng()).unwrap();
         let mut gui = Command::new(current_exe().unwrap().to_str().unwrap());
     
-        gui.args(&["gui", "-i", img]);
+        gui.args(&["gui", "-i", img, "-t", &profile.profile_name]);
         if profile.windowed {
             gui.arg("-w");
         }

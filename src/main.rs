@@ -22,6 +22,8 @@ enum Commands {
         hide_cursor: bool,
         #[clap(value_parser, short, long, default_value_t = false)]
         windowed: bool,
+        #[clap(value_parser, short, long)]
+        title: Option<String>,
     },
     DAEMON {
         #[clap(value_parser, short, long, value_name = "FILE")]
@@ -41,12 +43,14 @@ async fn main() {
             image,
             hide_cursor,
             windowed,
-        } => gui::open_gui(image, hide_cursor, windowed),
+            title
+        } => gui::open_gui(image, hide_cursor, windowed, title),
         Commands::DAEMON { config_file } => daemon::start_daemon(config_file).await,
         Commands::ENABLE => enable(),
     }
 }
 
+//isso ta muito feio
 fn enable() {
     run_script::run_script!("systemctl --user stop neptune").unwrap();
     let dir = format!(

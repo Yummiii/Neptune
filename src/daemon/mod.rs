@@ -3,8 +3,9 @@ use std::thread;
 use tokio::task;
 
 mod configs;
-mod screenlock;
 mod interactions;
+mod screenlock;
+mod screenshots;
 
 pub async fn start_daemon(config_file: Option<String>) {
     let configs = Configs::get(
@@ -20,6 +21,20 @@ pub async fn start_daemon(config_file: Option<String>) {
         task::spawn(async move {
             for profile in profiles_cfg {
                 screenlock::add_profile(ScreenlockProfile::from_config(profile.0, profile.1)).await;
+            }
+        });
+    }
+
+    if let Some(screenshots) = configs.screenshots {
+        task::spawn(async move {
+            if let Some(watch_dir) = screenshots.watch_dir {
+                if let Some(target_dir) = screenshots.target_dir {
+                    screenshots::start(
+                        watch_dir,
+                        target_dir,
+                        screenshots.initial_check.unwrap_or(false),
+                    );
+                }
             }
         });
     }

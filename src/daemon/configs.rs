@@ -9,8 +9,8 @@ use std::collections::HashMap;
 
 pub struct ScreenshotConfigs {
     pub initial_check: Option<bool>,
-    pub screenshots_watch_dir: Option<String>,
-    pub screenshots_target_dir: Option<String>,
+    pub watch_dir: Option<String>,
+    pub target_dir: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]

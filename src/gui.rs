@@ -12,7 +12,7 @@ use libadwaita::{
 };
 use std::path::Path;
 
-pub fn open_gui(image: Option<String>, hide_cursor: bool, windowed: bool) {
+pub fn open_gui(image: Option<String>, hide_cursor: bool, windowed: bool, title: Option<String>) {
     let application = Application::new(Some(&format!("moe.yummmi.Neptune_{}", Utc::now().timestamp_millis())), ApplicationFlags::FLAGS_NONE);
 
     application.connect_activate(move |app| {
@@ -48,6 +48,7 @@ pub fn open_gui(image: Option<String>, hide_cursor: bool, windowed: bool) {
                 window.set_cursor_from_name(Some("none"));
             }
 
+            window.set_title(Some(&title.as_ref().unwrap_or(&"NepNep".to_string())));
             window.show();
         }
     });
