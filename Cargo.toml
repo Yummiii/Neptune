@@ -6,28 +6,14 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-async-process = "1.5.0"
-chrono = "0.4.19"
-clap = { version = "3.2.16", features = ["derive"] }
-command-macros = { version = "0.2.9", features = ["nightly"] }
+chrono = "0.4.24"
+clap = { version = "4.2.1", features = ["derive"] }
 dotenv = "0.15.0"
-evdev = "0.12.0"
-figment = { version = "0.10.6", features = ["toml"] }
-futures = "0.3.21"
-home = "0.5.3"
-lazy_static = "1.4.0"
-libadwaita = "0.1.1"
+figment = { version = "0.10.8", features = ["toml"] }
 log = "0.4.17"
-notify = "5.0.0"
+notify = "5.1.0"
 pretty_env_logger = "0.4.0"
-prost = "0.11.0"
-rand = "0.8.5"
-serde = { version = "1.0.141", features = ["derive"] }
-serde_json = { version = "1.0.83", features = ["raw_value"] }
-serde_repr = "0.1.9"
-tokio = { version = "1.20.1", features = ["macros", "rt-multi-thread", "sync"] }
-tonic = "0.8.0"
-walkdir = "2.3.2"
-
-[build-dependencies]
-tonic-build = "0.8.0"
+serde = { version = "1.0.159", features = ["derive"] }
+tokio = { version = "1.27.0", features = ["macros", "rt-multi-thread", "sync"] }
+walkdir = "2.3.3"
+home = "0.5.4"
